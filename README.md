@@ -28,7 +28,7 @@ Built with **Vue 3**, **Vite**, **PrimeVue 4**, **Pinia**, **Vue Router 5**, and
 > [!IMPORTANT]
 > **Backend Service**: The active backend is the ASP.NET Core REST API running at `http://localhost:5204/api/v1`. Backend migrations, schema changes, and persistence are managed by the backend service owner (refer to the backend repository `README.md`).
 > 
-> **Legacy `server/` Directory**: The `server/` directory contains obsolete `json-server` mock artifacts (`db.json`, `routes.json`) kept for historical project reference only. Do **not** run `json-server` for current workflows.
+> **Legacy `server/` Directory**: The `server/` directory contains legacy `json-server` mock artifacts (`db.json`, `routes.json`) kept for historical project reference only. Do **not** run `json-server` for current workflows. The TB1 demo runs on the **in-memory fake API** (`src/shared/infrastructure/fake/`, activated with `VITE_USE_FAKE_API=true`), not on `server/`.
 
 ### Server Command Contract
 Transactional orchestration is executed atomically on the backend via dedicated command endpoints:
@@ -67,7 +67,7 @@ src/
 ├── pinia.js              # Pinia root instance
 └── main.js               # Application entry point
 
-server/                   # [OBSOLETE] Legacy json-server mock artifacts
+server/                   # Legacy json-server artifacts (reference only; TB1 demo uses the in-memory fake API)
 tests/                    # Vitest unit and regression test suite
 ```
 
