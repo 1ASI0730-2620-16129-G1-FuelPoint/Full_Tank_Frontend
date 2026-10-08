@@ -93,6 +93,13 @@ npm run dev
 ```
 The application launches at `http://localhost:5173`. Ensure your ASP.NET Core backend is active at `http://localhost:5204`.
 
+### Run in Demo Mode (fake API, no backend needed)
+
+```bash
+npm run dev -- --mode demo
+```
+Uses the in-memory fake API (`VITE_USE_FAKE_API=true`). Demo accounts — buyer: `logistics@transportesdelsur.com`, provider: `dispatch@petroandes.com`, password: `123456`.
+
 ### Run Regression & Unit Tests
 
 ```bash
