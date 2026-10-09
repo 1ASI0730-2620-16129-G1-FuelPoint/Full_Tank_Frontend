@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouterView } from 'vue-router';
 import i18n from './i18n.js';
 import iamRoutes from './iam/presentation/iam-routes.js';
 import paymentRoutes from './payment/presentation/payment-routes.js';
+import notificationRoutes from './notification/presentation/notification-routes.js';
 import { createIamGuard } from './iam/application/route-guard.js';
 
 const router = createRouter({
@@ -10,6 +11,7 @@ const router = createRouter({
         { path: '/', name: 'home', component: () => import('./shared/presentation/views/home.vue'), meta: { public: true } },
         { path: '/iam', component: RouterView, children: iamRoutes },
         { path: '/payment', component: RouterView, children: paymentRoutes },
+        { path: '/notification', component: RouterView, children: notificationRoutes },
         { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('./shared/presentation/views/page-not-found.vue'), meta: { public: true } },
     ],
     scrollBehavior: () => ({ top: 0 }),
