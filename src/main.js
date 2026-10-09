@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
+import ToastService from 'primevue/toastservice';
 import Material from '@primeuix/themes/material';
 import { definePreset } from '@primeuix/themes';
 import 'primeflex/primeflex.css';
@@ -24,5 +25,6 @@ createApp(App)
     .use(pinia)
     .use(router)
     .use(i18n)
+    .use(ToastService)
     .use(PrimeVue, { theme: { preset: FullTankTheme, options: { darkModeSelector: false } }, ripple: true })
     .mount('#app');
