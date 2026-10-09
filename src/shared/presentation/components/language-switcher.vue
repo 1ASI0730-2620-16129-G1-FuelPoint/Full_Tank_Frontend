@@ -1,13 +1,24 @@
 <script setup>
-import { useI18n } from 'vue-i18n';
-import { setLocale } from '../../../i18n.js';
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { setLocale } from "../../i18n.js";
 
-const { t, locale } = useI18n();
+const { locale } = useI18n();
+
+const languageOptions = [
+  { label: 'EN', value: 'en-US' },
+  { label: 'ES', value: 'es-419' },
+];
+
+const selectedLang = computed({
+  get: () => (locale.value === 'es' || locale.value === 'es-419' ? 'es-419' : 'en-US'),
+  set: (val) => setLocale(val),
+});
 </script>
 
 <template>
-  <div class="language-switch" role="group" :aria-label="t('shared.language')">
-    <button type="button" :aria-pressed="locale === 'es-419'" @click="setLocale('es-419')">ES</button>
-    <button type="button" :aria-pressed="locale === 'en-US'" @click="setLocale('en-US')">EN</button>
-  </div>
+  <pv-select-button v-model="selectedLang" :options="languageOptions" option-label="label" option-value="value" :allow-empty="false" />
 </template>
+
+<style scoped>
+</style>

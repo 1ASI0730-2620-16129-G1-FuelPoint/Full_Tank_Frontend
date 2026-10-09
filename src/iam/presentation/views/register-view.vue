@@ -1,11 +1,4 @@
 <script setup>
-import PvButton from 'primevue/button';
-import PvInputText from 'primevue/inputtext';
-import PvMessage from 'primevue/message';
-import PvSelect from 'primevue/select';
-import PvSelectButton from 'primevue/selectbutton';
-import PvTextarea from 'primevue/textarea';
-
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -80,7 +73,7 @@ async function submit() {
       phone: phone.value.trim(),
       description: description.value.trim(),
     });
-    router.push('/');
+    router.push('/dashboard');
   } catch (e) {
     errorKey.value = e.message || 'iam.user-failed';
   }
@@ -243,9 +236,5 @@ async function submit() {
 
 @media (max-width: 520px) {
   .field-row { grid-template-columns: 1fr; }
-}
-@media (max-width: 540px) {
-  .iam-screen { padding: 1rem; }
-  .iam-card { padding: 1.25rem; }
 }
 </style>

@@ -44,7 +44,7 @@ const dateValid = computed(() => !!deliveryDate.value && deliveryDate.value >= m
 
 // Only products with valid price and stock available can be requested.
 const availableProducts = computed(() =>
-    props.products.filter(p => p.available && p.stock > 0 && Number(p.pricePerLiter) > 0)
+  props.products.filter(p => p.available && p.stock > 0 && Number(p.pricePerLiter) > 0)
 );
 
 const selectedProduct = computed(() => props.products.find(p => p.id === selectedProductId.value) ?? null);
@@ -74,18 +74,18 @@ const stockLiters = computed(() => selectedProduct.value ? toLiters(availableSto
 
 const exceedsStock = computed(() => requestedLiters.value > stockLiters.value + 0.001);
 const exceedsEquipment = computed(() =>
-    equipmentNeed.value !== null && requestedLiters.value > toLiters(equipmentNeed.value, selectedProduct.value.unit) + 0.001
+  equipmentNeed.value !== null && requestedLiters.value > toLiters(equipmentNeed.value, selectedProduct.value.unit) + 0.001
 );
 
 const canSubmit = computed(() =>
-    !!selectedProduct.value &&
-    validPrice.value &&
-    Number(quantity.value) > 0 &&
-    compatible.value &&
-    !exceedsStock.value &&
-    !exceedsEquipment.value &&
-    addressValid.value &&
-    dateValid.value
+  !!selectedProduct.value &&
+  validPrice.value &&
+  Number(quantity.value) > 0 &&
+  compatible.value &&
+  !exceedsStock.value &&
+  !exceedsEquipment.value &&
+  addressValid.value &&
+  dateValid.value
 );
 
 // When equipment is chosen, suggest a compatible product, default quantity to its
@@ -178,10 +178,10 @@ watch([selectedProductId, selectedEquipmentId], () => {
     </pv-message>
     <pv-message v-else-if="selectedEquipment && !compatible" severity="warn" :closable="false" class="mt">
       {{ t('catalog.incompatible-alert', {
-      equipment: selectedEquipment.name,
-      required: fuelTypeLabel(selectedEquipment.requiredFuelType),
-      product: fuelTypeLabel(selectedProduct?.fuelType)
-    }) }}
+        equipment: selectedEquipment.name,
+        required: fuelTypeLabel(selectedEquipment.requiredFuelType),
+        product: fuelTypeLabel(selectedProduct?.fuelType)
+      }) }}
     </pv-message>
     <pv-message v-else-if="exceedsStock" severity="error" :closable="false" class="mt">
       {{ t('catalog.exceeds-stock', { stock: availableStock.toLocaleString(), unit: unitSuffix(selectedProduct.unit) }) }}

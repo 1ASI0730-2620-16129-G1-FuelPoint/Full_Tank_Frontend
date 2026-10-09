@@ -14,10 +14,10 @@ const roleSelection = () => import('./views/role-selection.vue');
  */
 const iamRoutes = [
     { path: '', redirect: { name: 'iam-login' } },
-    { path: 'login', name: 'iam-login', component: loginView, meta: { title: 'Sign In', public: true, noShell: true, guestOnly: true } },
-    { path: 'register', name: 'iam-register', component: registerView, meta: { title: 'Sign Up', public: true, noShell: true, guestOnly: true } },
+    { path: 'login', name: 'iam-login', component: loginView, meta: { title: 'Sign In', public: true } },
+    { path: 'register', name: 'iam-register', component: registerView, meta: { title: 'Sign Up', public: true } },
     { path: 'profile', name: 'iam-profile', component: profileView, meta: { title: 'My Profile' } },
-    { path: 'demo', name: 'iam-role-selection', component: roleSelection, meta: { title: 'Select Segment', public: true, noShell: true, guestOnly: true } },
+    { path: 'demo', name: 'iam-role-selection', component: roleSelection, meta: { title: 'Select Segment', public: true } },
 ];
 
 export default iamRoutes;

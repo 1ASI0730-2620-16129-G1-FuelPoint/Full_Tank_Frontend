@@ -1,30 +1,25 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import useNotificationStore from '../../application/notification.store.js';
+import useIamStore from '../../../iam/application/iam.store.js';
 import pinia from '../../../pinia.js';
 
 const { t } = useI18n();
 const router = useRouter();
 const notificationStore = useNotificationStore(pinia);
-const iamStore = ref(null);
+const iamStore = useIamStore(pinia);
 
-onMounted(async () => {
+onMounted(() => {
   if (!notificationStore.loaded) notificationStore.fetchNotifications();
-  try {
-    const iamModule = await import(/* @vite-ignore */ '../../../iam/application/iam.store.js');
-    if (iamModule?.default) iamStore.value = iamModule.default(pinia);
-  } catch {
-    // IAM is integrated by Brayan in feat/iam; gracefully fallback to general feed
-  }
 });
 
-const items = computed(() => {
-  if (iamStore.value?.isProvider) return notificationStore.forProvider(iamStore.value.currentProviderId);
-  if (iamStore.value?.currentCompanyId) return notificationStore.forBuyer(iamStore.value.currentCompanyId);
-  return notificationStore.items;
-});
+const items = computed(() =>
+  iamStore.isProvider
+    ? notificationStore.forProvider(iamStore.currentProviderId)
+    : notificationStore.forBuyer(iamStore.currentCompanyId)
+);
 
 const unread = computed(() => items.value.filter(n => !n.read).length);
 
@@ -119,12 +114,14 @@ function notifMessage(n) {
  * @returns {string|null}
  */
 function routeFor(n) {
-  const isProvider = iamStore.value?.isProvider;
+  const isProvider = iamStore.isProvider;
   const id = n.relatedId;
   switch (n.type) {
     case 'NEW_REQUEST':
       return '/ordering/pending';
     case 'ORDER_CREATED':
+      // The buyer just submitted a request; no order exists yet, so track the
+      // request itself (not "My Orders").
       return isProvider ? '/ordering/orders' : '/ordering/my-requests';
     case 'REQUEST_REJECTED':
       return '/ordering/my-requests';
@@ -132,15 +129,23 @@ function routeFor(n) {
     case 'ORDER_DISPATCHED':
     case 'ORDER_DELIVERED':
     case 'ORDER_CANCELLED':
+      // Open the specific order's detail (timeline) rather than the list.
       if (isProvider) return id ? `/ordering/orders/${id}` : '/ordering/orders';
       return id ? `/ordering/my-orders/${id}` : '/ordering/my-orders';
     case 'PAYMENT_REGISTERED':
+      // Land on the payment history (where the new payment shows), not the
+      // "Pending" tab which is empty right after paying.
       return isProvider ? '/reporting/provider' : '/payment?tab=history';
     case 'INVOICE_GENERATED':
+      // Open the invoice viewer for this order directly (relatedId = order id).
       return isProvider ? '/reporting/provider' : (id ? `/payment?invoice=${id}` : '/payment');
     case 'LOW_STOCK':
+      // Provider-side inventory alert. A buyer should never land on the
+      // provider's inventory screen.
       return isProvider ? '/inventory/products' : null;
     case 'NO_STOCK':
+      // Buyer auto-refill couldn't find stock at the favorite provider: send the
+      // buyer to the catalog to pick another provider; provider sees inventory.
       return isProvider ? '/inventory/products' : '/catalog';
     case 'EQUIPMENT_LOW':
       return isProvider ? null : '/equipment';
@@ -156,13 +161,8 @@ function onRead(notification) {
 }
 
 function readAll() {
-  if (iamStore.value?.isProvider) {
-    notificationStore.markAllAsRead('PROVIDER', iamStore.value.currentProviderId);
-  } else if (iamStore.value?.currentCompanyId) {
-    notificationStore.markAllAsRead('BUYER', iamStore.value.currentCompanyId);
-  } else {
-    items.value.forEach(n => notificationStore.markAsRead(n));
-  }
+  if (iamStore.isProvider) notificationStore.markAllAsRead('PROVIDER', iamStore.currentProviderId);
+  else notificationStore.markAllAsRead('BUYER', iamStore.currentCompanyId);
 }
 </script>
 

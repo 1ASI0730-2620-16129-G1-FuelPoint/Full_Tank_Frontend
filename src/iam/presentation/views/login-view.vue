@@ -1,16 +1,11 @@
 <script setup>
-import PvButton from 'primevue/button';
-import PvInputText from 'primevue/inputtext';
-import PvMessage from 'primevue/message';
-
 import { ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import useIamStore from '../../application/iam.store.js';
 import pinia from '../../../pinia.js';
 
 const router = useRouter();
-const route = useRoute();
 const { t } = useI18n();
 const iamStore = useIamStore(pinia);
 
@@ -32,8 +27,7 @@ async function submit() {
   }
   try {
     await iamStore.login(email.value.trim(), password.value);
-    const redirect = route.query.redirect;
-    router.push(typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/');
+    router.push('/dashboard');
   } catch (e) {
     errorKey.value = e.message || 'iam.invalid-credentials';
   }
@@ -118,8 +112,4 @@ async function submit() {
 
 .iam-switch { margin-top: 1.25rem; font-size: .88rem; color: #64748b; text-align: center; }
 .iam-switch a { color: #2563eb; font-weight: 600; text-decoration: none; }
-@media (max-width: 540px) {
-  .iam-screen { padding: 1rem; }
-  .iam-card { padding: 1.25rem; }
-}
 </style>

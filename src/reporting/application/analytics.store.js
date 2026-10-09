@@ -1,9 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { AnalyticsApi } from '../infrastructure/analytics-api.js';
-import { registerAnalyticsDemoData } from '../infrastructure/fake/analytics-demo-data.js';
-
-registerAnalyticsDemoData();
 
 const analyticsApi = new AnalyticsApi();
 

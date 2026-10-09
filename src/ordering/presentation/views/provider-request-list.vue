@@ -29,9 +29,9 @@ const iamStore = useIamStore(pinia);
 const loading = computed(() => store.loading);
 const errors = computed(() => store.errors);
 const pendingRequests = computed(() =>
-    store.requestsForProvider(iamStore.currentProviderId)
-        .filter(r => r.status === 'PENDING')
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  store.requestsForProvider(iamStore.currentProviderId)
+    .filter(r => r.status === 'PENDING')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 );
 
 function buyerName(id) {

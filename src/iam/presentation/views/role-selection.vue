@@ -1,7 +1,4 @@
 <script setup>
-import PvButton from 'primevue/button';
-import PvMessage from 'primevue/message';
-
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
@@ -21,7 +18,8 @@ const { t } = useI18n();
       </div>
 
       <pv-message severity="info" :closable="false" class="mb-4">
-        {{ t('iam.simulation-note') }}
+        <strong>Session Security & Authentication Notice:</strong>
+        Direct unauthenticated segment switching is disabled. FullTank requires a verified session token for all bounded context operations. Please sign in or create an account.
       </pv-message>
 
       <div class="role-options">
@@ -54,6 +52,7 @@ const { t } = useI18n();
         />
       </div>
 
+      <p class="iam-note">{{ t('iam.simulation-note') }}</p>
     </div>
   </div>
 </template>
@@ -91,10 +90,9 @@ const { t } = useI18n();
 
 .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 1rem; }
 .action-btn { width: 100%; justify-content: center; }
+.iam-note { margin-top: 1.25rem; font-size: .78rem; color: #94a3b8; text-align: center; }
 
 @media (max-width: 540px) {
   .role-options { grid-template-columns: 1fr; }
-  .iam-screen { padding: 1rem; }
-  .iam-card { padding: 1.25rem; }
 }
 </style>
