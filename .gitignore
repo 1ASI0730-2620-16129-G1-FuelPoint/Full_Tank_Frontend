@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-ssr/
+.firebase/
+coverage/
+*.log
+*.local
+.env.local
+.env.*.local
+.idea/
+.vscode/
+.DS_Store
