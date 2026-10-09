@@ -9,12 +9,12 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
-import useCatalogStore from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/catalog/application/catalog.store.js';
-import useIamStore from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/iam/application/iam.store.js';
-import { submitFuelRequest, listCompanyEquipment } from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/application/coordination.service.js';
-import { fuelTypeLabel } from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/domain/fuel-types.js';
-import RequestPanel from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/catalog/presentation/components/request-panel.vue';
-import pinia from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/pinia.js';
+import useCatalogStore from '../../application/catalog.store.js';
+import useIamStore from '../../../iam/application/iam.store.js';
+import { submitFuelRequest, listCompanyEquipment } from '../../../shared/application/coordination.service.js';
+import { fuelTypeLabel } from '../../../shared/domain/fuel-types.js';
+import RequestPanel from '../components/request-panel.vue';
+import pinia from '../../../pinia.js';
 
 const route = useRoute();
 const router = useRouter();

@@ -1,5 +1,5 @@
-import { BaseApi } from "../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/infrastructure/base-api.js";
-import { BaseEndpoint } from "../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/infrastructure/base-endpoint.js";
+import { BaseApi } from "../../shared/infrastructure/base-api.js";
+import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
 const providerCompaniesPath = import.meta.env.VITE_PROVIDER_COMPANIES_ENDPOINT_PATH;
 const inventoryPath = import.meta.env.VITE_INVENTORY_ENDPOINT_PATH;

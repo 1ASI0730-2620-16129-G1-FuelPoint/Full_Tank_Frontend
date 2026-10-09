@@ -8,12 +8,12 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import useCatalogStore from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/catalog/application/catalog.store.js';
-import useIamStore from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/iam/application/iam.store.js';
-import { listCompanyEquipment } from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/application/coordination.service.js';
-import { FUEL_TYPES, fuelTypeLabel } from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/shared/domain/fuel-types.js';
-import ProviderCard from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/catalog/presentation/components/provider-card.vue';
-import pinia from '../../../../../../../Desktop/FullTank_Integracion_TB1/proyecto-original/src/pinia.js';
+import useCatalogStore from '../../application/catalog.store.js';
+import useIamStore from '../../../iam/application/iam.store.js';
+import { listCompanyEquipment } from '../../../shared/application/coordination.service.js';
+import { FUEL_TYPES, fuelTypeLabel } from '../../../shared/domain/fuel-types.js';
+import ProviderCard from '../components/provider-card.vue';
+import pinia from '../../../pinia.js';
 
 const router = useRouter();
 const { t } = useI18n();
