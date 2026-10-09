@@ -1,13 +1,13 @@
 import { AxiosError } from 'axios';
-import { findFakeCollection } from './fake-database.js';
+import { findFakeCollection, findFakeHandler } from './fake-database.js';
 
 function response(config, data, status = 200) {
     return { config, data: structuredClone(data), status, statusText: status === 201 ? 'Created' : 'OK', headers: {} };
 }
 
-function fail(config, status, message) {
+function fail(config, status, message, data = { message }) {
     throw new AxiosError(message, AxiosError.ERR_BAD_REQUEST, config, null,
-        { config, data: { message }, status, statusText: 'Error', headers: {} });
+        { config, data, status, statusText: 'Error', headers: {} });
 }
 
 /** Generic in-memory CRUD only. Auth and business commands belong to later BC PRs. */
@@ -19,6 +19,20 @@ export function createFakeAdapter() {
         if (basePath && (path === basePath || path.startsWith(basePath + '/'))) path = path.slice(basePath.length) || '/';
         const method = (config.method ?? 'get').toLowerCase();
         if (path === '/health' && method === 'get') return response(config, { status: 'ok', mode: 'demo' });
+
+        let body = {};
+        if (config.data) {
+            try { body = typeof config.data === 'string' ? JSON.parse(config.data) : config.data; }
+            catch { return fail(config, 400, 'Invalid JSON body'); }
+            if (!body || typeof body !== 'object' || Array.isArray(body)) return fail(config, 400, 'An object body is required');
+        }
+        const command = findFakeHandler(method, path);
+        if (command) {
+            const result = await command.handler({ body, params: command.params, query: { ...Object.fromEntries(url.searchParams), ...config.params } });
+            const status = result.status ?? 200;
+            if (status >= 400) return fail(config, status, result.data?.message ?? 'Demo request failed', result.data);
+            return response(config, result.data, status);
+        }
 
         let items = findFakeCollection(path);
         let id = null;
@@ -37,12 +51,6 @@ export function createFakeAdapter() {
             return response(config, items.filter(item => Object.entries(params)
                 .filter(([, value]) => value !== undefined && value !== null)
                 .every(([key, value]) => String(item[key]) === String(value))));
-        }
-        let body = {};
-        if (config.data) {
-            try { body = typeof config.data === 'string' ? JSON.parse(config.data) : config.data; }
-            catch { return fail(config, 400, 'Invalid JSON body'); }
-            if (!body || typeof body !== 'object' || Array.isArray(body)) return fail(config, 400, 'An object body is required');
         }
         if (method === 'post' && id === null) {
             const nextId = Math.max(0, ...items.map(item => Number(item.id)).filter(Number.isFinite)) + 1;
