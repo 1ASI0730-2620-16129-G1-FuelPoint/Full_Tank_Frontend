@@ -1,0 +1,6 @@
+{
+  "shared": { "home": "Inicio", "language": "Idioma", "skip": "Ir al contenido", "demo": "Demo académica" },
+  "home": { "title": "Bienvenido a FullTank", "content": "Gestiona pedidos de combustible de forma eficiente entre empresas y proveedores." },
+  "footer": { "simulation-disclaimer": "Simulación académica · Sin transacciones monetarias · Solo para uso educativo" },
+  "notFound": { "title": "Página no encontrada", "content": "La página que buscas no está disponible.", "back": "Volver al inicio" }
+}

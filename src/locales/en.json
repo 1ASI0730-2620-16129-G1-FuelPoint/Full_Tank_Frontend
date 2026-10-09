@@ -1,0 +1,6 @@
+{
+  "shared": { "home": "Home", "language": "Language", "skip": "Skip to content", "demo": "Academic demo" },
+  "home": { "title": "Welcome to FullTank", "content": "Manage fuel orders efficiently between companies and providers." },
+  "footer": { "simulation-disclaimer": "Academic simulation · No monetary transactions · For educational use only" },
+  "notFound": { "title": "Page not found", "content": "The page you are looking for is unavailable.", "back": "Back to home" }
+}
