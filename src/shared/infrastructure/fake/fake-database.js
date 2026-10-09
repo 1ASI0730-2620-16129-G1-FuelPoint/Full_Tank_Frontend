@@ -1,4 +1,5 @@
 const collections = new Map();
+const handlers = new Map();
 const clone = value => structuredClone(value);
 
 /** Each BC registers its own demo data; the shared base has no business seed. */
@@ -21,4 +22,24 @@ export function resetFakeDatabase() {
 /** Clear registrations, useful for isolated tests and independent demo bootstraps. */
 export function clearFakeCollections() {
     collections.clear();
+    handlers.clear();
+}
+
+/** Register a BC-owned command without coupling shared infrastructure to that BC. */
+export function registerFakeHandler(method, pattern, handler) {
+    handlers.set(method.toLowerCase() + ':' + pattern.toString(), { method: method.toLowerCase(), pattern, handler });
+}
+
+export function findFakeHandler(method, path) {
+    for (const entry of handlers.values()) {
+        if (entry.method !== method) continue;
+        if (typeof entry.pattern === 'string') {
+            if (entry.pattern === path) return { handler: entry.handler, params: {} };
+        } else {
+            entry.pattern.lastIndex = 0;
+            const match = entry.pattern.exec(path);
+            if (match) return { handler: entry.handler, params: match.groups ?? {} };
+        }
+    }
+    return null;
 }
