@@ -19,6 +19,18 @@ describe('IAM route access', () => {
         const guard = createIamGuard(() => session(role));
         expect(await guard({ path, meta: {} })).toBe('/');
     });
+    it.each([
+        ['BUYER', '/inventory/product-inventory'],
+        ['BUYER', '/fulfillment/vehicle-list'],
+        ['BUYER', '/ordering/request-list'],
+        ['BUYER', '/reporting/client-reports'],
+        ['PROVIDER', '/equipment/equipment-form'],
+        ['PROVIDER', '/catalog/provider/1'],
+        ['PROVIDER', '/ordering/buyer-order/1'],
+    ])('keeps %s outside PrimeFuel alias %s', async (role, path) => {
+        const guard = createIamGuard(() => session(role));
+        expect(await guard({ path, meta: {} })).toBe('/');
+    });
     it('validates a persisted account once and permits its profile', async () => {
         const store = session('BUYER');
         const guard = createIamGuard(() => store);

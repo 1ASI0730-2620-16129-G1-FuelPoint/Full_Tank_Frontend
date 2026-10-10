@@ -8,6 +8,8 @@ const equipmentForm = () => import('./views/equipment-form.vue');
  */
 const equipmentRoutes = [
     { path: '', name: 'equipment-list', component: equipmentList, meta: { title: 'Equipment' } },
+    { path: 'equipment-form', redirect: 'new' },
+    { path: 'equipment-form/:id', redirect: to => `/equipment/${to.params.id}/edit` },
     { path: 'new', name: 'equipment-new', component: equipmentForm, meta: { title: 'Add Equipment' } },
     { path: ':id/edit', name: 'equipment-edit', component: equipmentForm, meta: { title: 'Edit Equipment' } },
 ];

@@ -1,3 +1,6 @@
+import useIamStore from '../../iam/application/iam.store.js';
+import pinia from '../../pinia.js';
+
 const providerRequestList = () => import('./views/provider-request-list.vue');
 const orderList           = () => import('./views/order-list.vue');
 const orderDetail         = () => import('./views/order-detail.vue');
@@ -13,6 +16,22 @@ const buyerOrderDetail    = () => import('./views/buyer-order-detail.vue');
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const orderingRoutes = [
+    {
+        path: '',
+        redirect: () => {
+            try {
+                const iamStore = useIamStore(pinia);
+                return iamStore.isBuyer ? '/ordering/my-requests' : '/ordering/pending';
+            } catch {
+                return '/ordering/pending';
+            }
+        }
+    },
+    // Backward compatibility aliases for PrimeFuel Angular routes
+    { path: 'request-list', redirect: 'pending' },
+    { path: 'order-list', redirect: 'orders' },
+    { path: 'order-detail/:id', redirect: to => `/ordering/orders/${to.params.id}` },
+    { path: 'buyer-order/:id', redirect: to => `/ordering/my-orders/${to.params.id}` },
     // Provider
     { path: 'pending',     name: 'ordering-provider-pending', component: providerRequestList, meta: { title: 'Pending Requests' } },
     { path: 'orders',      name: 'ordering-orders',           component: orderList,           meta: { title: 'Orders' } },

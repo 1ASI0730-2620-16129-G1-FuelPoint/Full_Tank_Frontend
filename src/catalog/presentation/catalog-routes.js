@@ -8,6 +8,7 @@ const providerDetail = () => import('./views/provider-detail.vue');
  */
 const catalogRoutes = [
     { path: '', name: 'catalog', component: catalogView, meta: { title: 'Catalog' } },
+    { path: 'provider/:id', redirect: to => `/catalog/providers/${to.params.id}` },
     { path: 'providers/:id', name: 'catalog-provider-detail', component: providerDetail, meta: { title: 'Provider Detail' } },
 ];
 

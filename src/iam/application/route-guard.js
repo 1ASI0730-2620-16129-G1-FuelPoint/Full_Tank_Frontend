@@ -1,8 +1,27 @@
 import useIamStore from './iam.store.js';
 import pinia from '../../pinia.js';
 
-const PROVIDER_ONLY = ['/inventory', '/fulfillment', '/reporting/provider', '/ordering/pending', '/ordering/orders', '/ordering/collections'];
-const BUYER_ONLY = ['/catalog', '/equipment', '/payment', '/reporting/buyer', '/ordering/my-requests', '/ordering/my-orders'];
+const PROVIDER_ONLY = [
+    '/inventory',
+    '/fulfillment',
+    '/reporting/provider',
+    '/reporting/client-reports',
+    '/reporting/fulfillment-kpi',
+    '/ordering/pending',
+    '/ordering/request-list',
+    '/ordering/orders',
+    '/ordering/order-list',
+    '/ordering/collections'
+];
+const BUYER_ONLY = [
+    '/catalog',
+    '/equipment',
+    '/payment',
+    '/reporting/buyer',
+    '/ordering/my-requests',
+    '/ordering/my-orders',
+    '/ordering/buyer-order'
+];
 const matches = (path, prefixes) => prefixes.some(prefix => path === prefix || path.startsWith(prefix + '/'));
 
 /** Validate a restored session and enforce access without importing other BCs. */

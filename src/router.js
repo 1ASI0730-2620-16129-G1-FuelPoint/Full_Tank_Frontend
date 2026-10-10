@@ -15,6 +15,7 @@ import useIamStore from "./iam/application/iam.store.js";
 import pinia from "./pinia.js";
 
 // Lazy-loaded shared views
+const homeView = () => import('./shared/presentation/views/home.vue');
 const about = () => import('./shared/presentation/views/about.vue');
 const terms = () => import('./shared/presentation/views/terms.vue');
 const pageNotFound = () => import('./shared/presentation/views/page-not-found.vue');
@@ -26,6 +27,7 @@ const dashboardView = () => import('./reporting/presentation/views/dashboard.vue
 
 const routes = [
     { path: '/', redirect: '/dashboard' },
+    { path: '/home', name: 'home', component: homeView, meta: { title: 'Home', public: true } },
 
     // IAM — login/register are public (no app shell); profile uses the shell
     { path: '/iam', component: RouterView, children: iamRoutes },
@@ -52,9 +54,28 @@ const router = createRouter({
 });
 
 // Route prefixes that belong exclusively to one segment. Anything not listed
-// here (dashboard, notifications, about, terms) is shared by both segments.
-const PROVIDER_ONLY = ['/inventory', '/fulfillment', '/reporting/provider', '/ordering/pending', '/ordering/orders', '/ordering/collections'];
-const BUYER_ONLY = ['/catalog', '/equipment', '/payment', '/reporting/buyer', '/ordering/my-requests', '/ordering/my-orders'];
+// here (dashboard, notifications, about, terms, home) is shared by both segments.
+const PROVIDER_ONLY = [
+    '/inventory',
+    '/fulfillment',
+    '/reporting/provider',
+    '/reporting/client-reports',
+    '/reporting/fulfillment-kpi',
+    '/ordering/pending',
+    '/ordering/request-list',
+    '/ordering/orders',
+    '/ordering/order-list',
+    '/ordering/collections'
+];
+const BUYER_ONLY = [
+    '/catalog',
+    '/equipment',
+    '/payment',
+    '/reporting/buyer',
+    '/ordering/my-requests',
+    '/ordering/my-orders',
+    '/ordering/buyer-order'
+];
 
 const matchesPrefix = (path, prefixes) => prefixes.some(p => path === p || path.startsWith(p + '/'));
 

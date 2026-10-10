@@ -11,6 +11,13 @@ const driverForm   = () => import('./views/driver-form.vue');
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const fulfillmentRoutes = [
+    { path: '', redirect: 'vehicles' },
+    { path: 'vehicle-list', redirect: 'vehicles' },
+    { path: 'vehicle-form', redirect: 'vehicles/new' },
+    { path: 'vehicle-form/:id', redirect: to => `/fulfillment/vehicles/${to.params.id}/edit` },
+    { path: 'driver-list', redirect: 'drivers' },
+    { path: 'driver-form', redirect: 'drivers/new' },
+    { path: 'driver-form/:id', redirect: to => `/fulfillment/drivers/${to.params.id}/edit` },
     { path: 'vehicles',          name: 'fulfillment-vehicles',      component: vehicleList,  meta: { title: 'Fleet Management' } },
     { path: 'vehicles/new',      name: 'fulfillment-vehicle-new',   component: vehicleForm,  meta: { title: 'Add Vehicle' } },
     { path: 'vehicles/:id/edit', name: 'fulfillment-vehicle-edit',  component: vehicleForm,  meta: { title: 'Edit Vehicle' } },

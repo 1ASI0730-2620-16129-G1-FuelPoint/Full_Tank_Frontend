@@ -17,6 +17,7 @@ const iamRoutes = [
     { path: 'login', name: 'iam-login', component: loginView, meta: { title: 'Sign In', public: true, noShell: true, guestOnly: true } },
     { path: 'register', name: 'iam-register', component: registerView, meta: { title: 'Sign Up', public: true, noShell: true, guestOnly: true } },
     { path: 'profile', name: 'iam-profile', component: profileView, meta: { title: 'My Profile' } },
+    { path: 'role-selection', redirect: { name: 'iam-role-selection' } },
     { path: 'demo', name: 'iam-role-selection', component: roleSelection, meta: { title: 'Select Segment', public: true, noShell: true, guestOnly: true } },
 ];
 
