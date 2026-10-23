@@ -58,7 +58,7 @@ const companyId = computed(() => iamStore.currentCompanyId);
 // Only orders the buyer has received (confirmed reception) are payable.
 const pendingOrders = computed(() =>
   orderingStore.ordersForBuyer(companyId.value)
-    .filter(o => o.status === 'PENDING_PAYMENT' && !paymentStore.isOrderPaid(o.id))
+    .filter(o => (o.status === 'PENDING_PAYMENT' || o.status === 'DELIVERED') && !paymentStore.isOrderPaid(o.id))
 );
 const buyerPayments = computed(() => paymentStore.paymentsForBuyer(companyId.value));
 const buyerInvoices = computed(() => paymentStore.invoicesForBuyer(companyId.value));

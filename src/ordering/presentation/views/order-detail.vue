@@ -44,6 +44,16 @@ onMounted(async () => {
 
 const order = computed(() => store.getOrderById(route.params.id));
 
+const canDispatch = computed(() => {
+  const s = (order.value?.status || '').toUpperCase();
+  return ['ACCEPTED', 'CREATED', 'PENDING'].includes(s);
+});
+
+const canCancel = computed(() => {
+  const s = (order.value?.status || '').toUpperCase();
+  return ['ACCEPTED', 'CREATED', 'PENDING', 'PENDING_PAYMENT'].includes(s);
+});
+
 const statusSeverity = computed(() => orderStatusSeverity(order.value?.status));
 const statusLabel = computed(() =>
   order.value ? t('ordering.status-' + order.value.status) : '—'
@@ -196,8 +206,9 @@ async function confirmAssign() {
           <div class="card-divider"/>
 
           <div class="card-footer">
-            <template v-if="order.status === 'ACCEPTED'">
+            <template v-if="canDispatch">
               <pv-button
+                  v-if="canCancel"
                   :label="t('ordering.cancel-order')"
                   icon="pi pi-times"
                   severity="danger"
@@ -218,11 +229,14 @@ async function confirmAssign() {
             <div v-else-if="order.status === 'DISPATCHED'" class="waiting-msg">
               <i class="pi pi-clock"/> {{ t('ordering.waiting-confirmation') }}
             </div>
-            <div v-else-if="order.status === 'PENDING_PAYMENT'" class="waiting-msg paid">
+            <div v-else-if="order.status === 'PENDING_PAYMENT' || order.status === 'DELIVERED'" class="waiting-msg paid">
               <i class="pi pi-wallet"/> {{ t('ordering.waiting-payment') }}
             </div>
-            <div v-else class="waiting-msg done">
+            <div v-else-if="order.status === 'PAID' || order.status === 'CLOSED'" class="waiting-msg done">
               <i class="pi pi-check-circle"/> {{ t('ordering.completed') }}
+            </div>
+            <div v-else class="waiting-msg">
+              {{ statusLabel }}
             </div>
           </div>
         </template>

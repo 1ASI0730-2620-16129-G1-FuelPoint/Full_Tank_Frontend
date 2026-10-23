@@ -61,10 +61,11 @@ const STEPS = [
   { key: 'PAID',            icon: 'pi pi-verified',     at: 'paidAt' },
 ];
 const currentIndex = computed(() => {
-  const s = order.value?.status;
-  if (s === 'CLOSED') return STEPS.length; // everything done
-  const i = STEPS.findIndex(step => step.key === s);
-  return i === -1 ? 0 : i;
+  const s = (order.value?.status || '').toUpperCase();
+  if (s === 'CLOSED' || s === 'PAID') return 3;
+  if (s === 'PENDING_PAYMENT' || s === 'DELIVERED') return 2;
+  if (s === 'DISPATCHED') return 1;
+  return 0; // ACCEPTED, CREATED, PENDING
 });
 function stepState(i) {
   if (i < currentIndex.value) return 'done';
@@ -148,13 +149,15 @@ function confirmReception() {
                   @click="confirmReception"
               />
               <pv-button
-                  v-else-if="order.status === 'PENDING_PAYMENT'"
+                  v-else-if="order.status === 'PENDING_PAYMENT' || order.status === 'DELIVERED'"
                   :label="t('ordering.pay')"
                   icon="pi pi-credit-card"
                   @click="router.push('/payment')"
               />
-              <span v-else-if="order.status === 'ACCEPTED'" class="hint">{{ t('ordering.awaiting-dispatch') }}</span>
-              <span v-else class="hint done"><i class="pi pi-check-circle"/> {{ t('ordering.completed') }}</span>
+              <span v-else-if="order.status === 'ACCEPTED' || order.status === 'CREATED' || order.status === 'PENDING'" class="hint">{{ t('ordering.awaiting-dispatch') }}</span>
+              <span v-else-if="order.status === 'CANCELLED'" class="hint" style="color: #dc2626;"><i class="pi pi-ban"/> {{ t('ordering.status-CANCELLED') }}</span>
+              <span v-else-if="order.status === 'PAID' || order.status === 'CLOSED'" class="hint done"><i class="pi pi-check-circle"/> {{ t('ordering.completed') }}</span>
+              <span v-else class="hint">{{ t('ordering.status-' + order.status) }}</span>
             </div>
           </template>
         </pv-card>

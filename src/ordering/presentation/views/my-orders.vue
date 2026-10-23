@@ -105,14 +105,16 @@ function confirmReception(order) {
               @click="confirmReception(order)"
           />
           <pv-button
-              v-else-if="order.status === 'PENDING_PAYMENT'"
+              v-else-if="order.status === 'PENDING_PAYMENT' || order.status === 'DELIVERED'"
               :label="t('ordering.pay')"
               icon="pi pi-credit-card"
               size="small"
               @click="router.push('/payment')"
           />
-          <span v-else-if="order.status === 'ACCEPTED'" class="oc-hint">{{ t('ordering.awaiting-dispatch') }}</span>
-          <span v-else class="oc-hint done"><i class="pi pi-check-circle"/> {{ t('ordering.completed') }}</span>
+          <span v-else-if="order.status === 'ACCEPTED' || order.status === 'CREATED' || order.status === 'PENDING'" class="oc-hint">{{ t('ordering.awaiting-dispatch') }}</span>
+          <span v-else-if="order.status === 'CANCELLED'" class="oc-hint" style="color: #dc2626;"><i class="pi pi-ban"/> {{ t('ordering.status-CANCELLED') }}</span>
+          <span v-else-if="order.status === 'PAID' || order.status === 'CLOSED'" class="oc-hint done"><i class="pi pi-check-circle"/> {{ t('ordering.completed') }}</span>
+          <span v-else class="oc-hint">{{ t('ordering.status-' + order.status) }}</span>
         </div>
       </div>
     </div>

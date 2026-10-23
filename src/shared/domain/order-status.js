@@ -26,8 +26,11 @@ export const ORDER_STATUS = Object.freeze({
  */
 export function orderStatusSeverity(status) {
     return {
+        CREATED: 'info',
+        PENDING: 'info',
         ACCEPTED: 'info',
         DISPATCHED: 'warn',
+        DELIVERED: 'contrast',
         PENDING_PAYMENT: 'contrast',
         PAID: 'success',
         CLOSED: 'secondary',
