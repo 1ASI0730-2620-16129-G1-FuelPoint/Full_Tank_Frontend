@@ -244,21 +244,21 @@ const useOrderingStore = defineStore('ordering', () => {
     }
 
     // ── Segment-scoped read models ────────────────────────────────────────
-    /** @param {number} companyId @returns {Request[]} */
+    /** @param {number|string} companyId @returns {Request[]} */
     function requestsForBuyer(companyId) {
-        return requests.value.filter(r => (r.companyId ?? r.clientId) === companyId);
+        return requests.value.filter(r => String(r.companyId ?? r.clientId) === String(companyId));
     }
-    /** @param {number} companyId @returns {Order[]} */
+    /** @param {number|string} companyId @returns {Order[]} */
     function ordersForBuyer(companyId) {
-        return orders.value.filter(o => (o.companyId ?? o.clientId) === companyId);
+        return orders.value.filter(o => String(o.companyId ?? o.clientId) === String(companyId));
     }
-    /** @param {number} providerId @returns {Request[]} */
+    /** @param {number|string} providerId @returns {Request[]} */
     function requestsForProvider(providerId) {
-        return requests.value.filter(r => r.providerId === providerId);
+        return requests.value.filter(r => String(r.providerId) === String(providerId));
     }
-    /** @param {number} providerId @returns {Order[]} */
+    /** @param {number|string} providerId @returns {Order[]} */
     function ordersForProvider(providerId) {
-        return orders.value.filter(o => o.providerId === providerId);
+        return orders.value.filter(o => String(o.providerId) === String(providerId));
     }
 
     // ── Async actions used by the coordination service ────────────────────
