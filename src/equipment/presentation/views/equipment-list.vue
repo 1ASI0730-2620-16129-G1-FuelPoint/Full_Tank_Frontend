@@ -25,7 +25,7 @@ const equipmentStore = useEquipmentStore(pinia);
 const iamStore = useIamStore(pinia);
 
 onMounted(async () => {
-  if (!equipmentStore.loaded) await equipmentStore.fetchEquipment();
+  await equipmentStore.fetchEquipment();
   if (!iamStore.providerCompanies.length) await iamStore.fetchDirectories();
 });
 

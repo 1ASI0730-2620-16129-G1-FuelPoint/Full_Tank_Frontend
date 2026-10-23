@@ -361,9 +361,7 @@ export async function confirmOrderReception(params = {}) {
     }
 
     // Refresh relevant affected state only AFTER success
-    if (equipment().loaded) {
-        await equipment().fetchEquipment();
-    }
+    await equipment().fetchEquipment();
     const provId = (typeof order === 'object' && order !== null ? order.providerId : null) ?? received?.providerId;
     if (provId && (fulfillment().drivers.length || fulfillment().vehicles.length)) {
         await Promise.all([

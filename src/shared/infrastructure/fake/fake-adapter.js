@@ -316,6 +316,37 @@ function receiveOrder(config, id) {
     order.status = 'DELIVERED';
     order.deliveredAt = nowIso();
     order.updatedAt = nowIso();
+
+    if (order.equipmentId != null) {
+        const equipment = findById('equipment', order.equipmentId);
+        if (equipment) {
+            const LITERS_PER_GALLON = 3.78541;
+            const orderLiters = String(order.unit).toUpperCase() === 'GALLONS'
+                ? Number(order.quantity || 0) * LITERS_PER_GALLON
+                : Number(order.quantity || 0);
+            const addedInEquipmentUnit = String(equipment.unit).toUpperCase() === 'GALLONS'
+                ? orderLiters / LITERS_PER_GALLON
+                : orderLiters;
+
+            equipment.currentLevel = Math.min(
+                Number(equipment.capacity || 0),
+                Number(equipment.currentLevel || 0) + addedInEquipmentUnit
+            );
+            equipment.lastRefillDate = nowIso();
+
+            collection('refillHistory').push({
+                id: nextId('refillHistory'),
+                equipmentId: equipment.id,
+                companyId: equipment.companyId,
+                providerId: order.providerId,
+                fuelType: order.fuelType,
+                quantity: order.quantity,
+                requestId: order.requestId ?? null,
+                createdAt: nowIso(),
+            });
+        }
+    }
+
     return Promise.resolve(ok(config, { ...order }));
 }
 
