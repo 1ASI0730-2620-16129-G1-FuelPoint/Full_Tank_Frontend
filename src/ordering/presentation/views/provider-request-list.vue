@@ -91,7 +91,7 @@ async function doReject() {
 
 onMounted(() => {
   store.clearErrors();
-  if (!store.requestsLoaded) store.fetchRequests();
+  store.fetchRequests();
   if (!iamStore.buyerCompanies.length) iamStore.fetchDirectories();
 });
 </script>
