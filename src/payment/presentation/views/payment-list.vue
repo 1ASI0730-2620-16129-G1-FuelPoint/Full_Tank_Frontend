@@ -5,7 +5,7 @@
  * coordination service (which records the payment + invoice and flips the order
  * payment status). The page never mutates the Ordering store directly.
  */
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import useOrderingStore from '../../../ordering/application/ordering.store.js';
@@ -33,6 +33,16 @@ const selectedInvoice = ref(null);
 const successVisible = ref(false);
 const processing = ref(false);
 
+function autoOpenPayIfRequested() {
+  const targetId = route.query.orderId;
+  if (!targetId) return;
+  tab.value = 'pending';
+  const target = orderingStore.orders.find(o => String(o.id) === String(targetId));
+  if (target) {
+    openPay(target);
+  }
+}
+
 onMounted(async () => {
   if (!iamStore.buyerCompanies.length) await iamStore.fetchDirectories();
   if (!orderingStore.ordersLoaded) await orderingStore.fetchOrders();
@@ -51,6 +61,13 @@ onMounted(async () => {
       viewInvoice(invoice);
     }
   }
+
+  // Auto-open pay modal when redirected with ?orderId=...
+  autoOpenPayIfRequested();
+});
+
+watch(() => route.query.orderId, (newId) => {
+  if (newId) autoOpenPayIfRequested();
 });
 
 const companyId = computed(() => iamStore.currentCompanyId);

@@ -51,6 +51,10 @@ function confirmReception(order) {
     },
   });
 }
+
+function goToPayment(order) {
+  router.push({ path: '/payment', query: { orderId: order.id } });
+}
 </script>
 
 <template>
@@ -109,7 +113,7 @@ function confirmReception(order) {
               :label="t('ordering.pay')"
               icon="pi pi-credit-card"
               size="small"
-              @click="router.push('/payment')"
+              @click="goToPayment(order)"
           />
           <span v-else-if="order.status === 'ACCEPTED' || order.status === 'CREATED' || order.status === 'PENDING'" class="oc-hint">{{ t('ordering.awaiting-dispatch') }}</span>
           <span v-else-if="order.status === 'CANCELLED'" class="oc-hint" style="color: #dc2626;"><i class="pi pi-ban"/> {{ t('ordering.status-CANCELLED') }}</span>
