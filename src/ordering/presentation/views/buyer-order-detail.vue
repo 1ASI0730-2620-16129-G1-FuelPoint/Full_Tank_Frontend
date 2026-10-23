@@ -31,7 +31,7 @@ const allDrivers = ref([]);
 const allVehicles = ref([]);
 
 onMounted(async () => {
-  if (!store.ordersLoaded) await store.fetchOrders();
+  await store.fetchOrders();
   if (!iamStore.providerCompanies.length) await iamStore.fetchDirectories();
   const all = await listAllResources(order.value?.providerId);
   allDrivers.value = all.drivers;

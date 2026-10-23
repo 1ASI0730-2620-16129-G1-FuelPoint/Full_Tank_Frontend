@@ -20,7 +20,7 @@ const iamStore = useIamStore(pinia);
 
 onMounted(() => {
   store.clearErrors();
-  if (!store.ordersLoaded) store.fetchOrders();
+  store.fetchOrders();
   if (!iamStore.buyerCompanies.length) iamStore.fetchDirectories();
 });
 

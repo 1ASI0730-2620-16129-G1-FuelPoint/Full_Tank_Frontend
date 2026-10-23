@@ -18,12 +18,12 @@ const store = useOrderingStore(pinia);
 const iamStore = useIamStore(pinia);
 
 onMounted(() => {
-  if (!store.ordersLoaded) store.fetchOrders();
+  store.fetchOrders();
   if (!iamStore.buyerCompanies.length) iamStore.fetchDirectories();
 });
 
-const isReceivable = (o) => o.status === 'PENDING_PAYMENT';
-const isCollected = (o) => o.status === 'PAID' || o.status === 'CLOSED';
+const isReceivable = (o) => (o.status === 'PENDING_PAYMENT' || o.status === 'DELIVERED') && o.paymentStatus !== 'PAID';
+const isCollected = (o) => o.status === 'PAID' || o.status === 'CLOSED' || o.paymentStatus === 'PAID';
 
 const providerOrders = computed(() => store.ordersForProvider(iamStore.currentProviderId));
 const receivable = computed(() => providerOrders.value.filter(isReceivable));

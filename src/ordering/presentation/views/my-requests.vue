@@ -32,7 +32,7 @@ function dismissBanner() {
 function goNewRequest() { router.push('/catalog'); }
 
 onMounted(() => {
-  if (!store.requestsLoaded) store.fetchRequests();
+  store.fetchRequests();
   if (!iamStore.providerCompanies.length) iamStore.fetchDirectories();
 });
 

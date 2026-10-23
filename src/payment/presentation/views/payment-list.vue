@@ -45,7 +45,7 @@ function autoOpenPayIfRequested() {
 
 onMounted(async () => {
   if (!iamStore.buyerCompanies.length) await iamStore.fetchDirectories();
-  if (!orderingStore.ordersLoaded) await orderingStore.fetchOrders();
+  await orderingStore.fetchOrders();
   await Promise.all([paymentStore.fetchPayments(), paymentStore.fetchInvoices()]);
 
   // Deep-link from notifications.

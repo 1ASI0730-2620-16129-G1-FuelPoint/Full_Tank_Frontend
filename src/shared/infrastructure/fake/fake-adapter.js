@@ -30,7 +30,7 @@ const MONTH_LABELS = [
 ];
 const SHORT_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const ACTIVE_ORDER_STATUSES = ['CREATED', 'ACCEPTED', 'DISPATCHED'];
+const ACTIVE_ORDER_STATUSES = ['CREATED', 'ACCEPTED', 'PENDING', 'DISPATCHED', 'DELIVERED', 'PENDING_PAYMENT'];
 
 function ok(config, data, status = 200) {
     return {
@@ -307,6 +307,39 @@ function dispatchOrder(config, id) {
     order.status = 'DISPATCHED';
     order.dispatchedAt = nowIso();
     order.updatedAt = nowIso();
+
+    if (order.driverId) {
+        const driver = findById('drivers', order.driverId);
+        if (driver) driver.status = 'ASSIGNED';
+    }
+    if (order.vehicleId) {
+        const vehicle = findById('vehicles', order.vehicleId);
+        if (vehicle) vehicle.status = 'ASSIGNED';
+    }
+
+    let delivery = collection('deliveries').find(d => String(d.orderId) === String(order.id));
+    if (!delivery) {
+        delivery = {
+            id: nextId('deliveries'),
+            orderId: order.id,
+            providerId: order.providerId,
+            driverId: order.driverId,
+            vehicleId: order.vehicleId,
+            status: 'on_the_way',
+            originLocation: 'Petro Andes Terminal, Callao',
+            destinationLocation: order.deliveryAddress ?? '',
+            dispatchedAt: nowIso(),
+            deliveredAt: null,
+            notes: 'En camino',
+        };
+        collection('deliveries').push(delivery);
+    } else {
+        delivery.status = 'on_the_way';
+        delivery.driverId = order.driverId;
+        delivery.vehicleId = order.vehicleId;
+        delivery.dispatchedAt = nowIso();
+    }
+
     return Promise.resolve(ok(config, { ...order }));
 }
 
@@ -316,6 +349,20 @@ function receiveOrder(config, id) {
     order.status = 'DELIVERED';
     order.deliveredAt = nowIso();
     order.updatedAt = nowIso();
+
+    if (order.driverId) {
+        const driver = findById('drivers', order.driverId);
+        if (driver) driver.status = 'AVAILABLE';
+    }
+    if (order.vehicleId) {
+        const vehicle = findById('vehicles', order.vehicleId);
+        if (vehicle) vehicle.status = 'AVAILABLE';
+    }
+    const delivery = collection('deliveries').find(d => String(d.orderId) === String(order.id));
+    if (delivery) {
+        delivery.status = 'delivered';
+        delivery.deliveredAt = nowIso();
+    }
 
     if (order.equipmentId != null) {
         const equipment = findById('equipment', order.equipmentId);
@@ -423,6 +470,17 @@ function checkout(config) {
         createdInvoice.invoiceNumber = `F001-${String(invoiceId).padStart(6, '0')}`;
     }
     collection('invoices').push(createdInvoice);
+
+    const orderId = createdPayment.orderId ?? payment.orderId ?? null;
+    if (orderId != null) {
+        const order = findById('orders', orderId);
+        if (order) {
+            order.paymentStatus = 'PAID';
+            order.status = 'PAID';
+            order.paidAt = nowIso();
+            order.updatedAt = nowIso();
+        }
+    }
     return Promise.resolve(ok(config, {
         payment: { ...createdPayment },
         invoice: { ...createdInvoice },

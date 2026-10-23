@@ -26,7 +26,7 @@ const store = useOrderingStore(pinia);
 const iamStore = useIamStore(pinia);
 
 onMounted(() => {
-  if (!store.ordersLoaded) store.fetchOrders();
+  store.fetchOrders();
   if (!iamStore.providerCompanies.length) iamStore.fetchDirectories();
 });
 

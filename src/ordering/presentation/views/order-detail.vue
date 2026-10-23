@@ -35,7 +35,7 @@ const selectedVehicle = ref(null);
 const assigning = ref(false);
 
 onMounted(async () => {
-  if (!store.ordersLoaded) await store.fetchOrders();
+  await store.fetchOrders();
   if (!iamStore.buyerCompanies.length) await iamStore.fetchDirectories();
   const all = await listAllResources(iamStore.currentProviderId);
   allDrivers.value = all.drivers;
