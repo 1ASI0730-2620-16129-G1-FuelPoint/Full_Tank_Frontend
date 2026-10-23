@@ -1,11 +1,12 @@
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import useIamStore from '../../application/iam.store.js';
 import pinia from '../../../pinia.js';
 
 const router = useRouter();
+const route = useRoute();
 const { t } = useI18n();
 const iamStore = useIamStore(pinia);
 
