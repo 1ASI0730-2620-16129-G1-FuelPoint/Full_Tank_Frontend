@@ -1,0 +1,8 @@
+{
+  "/provider-products*": "/providerProducts$1",
+  "/inventory-movements*": "/inventoryMovements$1",
+  "/favorite-providers*": "/favoriteProviders$1",
+  "/provider-ratings*": "/providerRatings$1",
+  "/refill-history*": "/refillHistory$1",
+  "/api/v1/*": "/$1"
+}

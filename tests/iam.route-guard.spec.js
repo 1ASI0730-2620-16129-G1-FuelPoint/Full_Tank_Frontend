@@ -24,9 +24,14 @@ describe('IAM route access', () => {
         ['BUYER', '/fulfillment/vehicle-list'],
         ['BUYER', '/ordering/request-list'],
         ['BUYER', '/reporting/client-reports'],
+        ['BUYER', '/reporting/provider-dashboard'],
+        ['BUYER', '/reporting/report-main'],
         ['PROVIDER', '/equipment/equipment-form'],
         ['PROVIDER', '/catalog/provider/1'],
         ['PROVIDER', '/ordering/buyer-order/1'],
+        ['PROVIDER', '/ordering/request-form'],
+        ['PROVIDER', '/reporting/buyer-dashboard'],
+        ['PROVIDER', '/reporting/buyer-report'],
     ])('keeps %s outside PrimeFuel alias %s', async (role, path) => {
         const guard = createIamGuard(() => session(role));
         expect(await guard({ path, meta: {} })).toBe('/');

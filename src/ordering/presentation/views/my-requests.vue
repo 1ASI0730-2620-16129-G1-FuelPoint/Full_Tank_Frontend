@@ -37,8 +37,8 @@ onMounted(() => {
 });
 
 const requests = computed(() =>
-    [...store.requestsForBuyer(iamStore.currentCompanyId)]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  [...store.requestsForBuyer(iamStore.currentCompanyId)]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 );
 
 function providerName(id) {

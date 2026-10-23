@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { IamApi } from "../infrastructure/iam-api.js";
 import { Session } from "../domain/model/session.entity.js";
 
+const iamApi = new IamApi();
 const STORAGE_KEY = 'fulltank.session';
 
 function loadSession() {
@@ -27,7 +28,6 @@ function sessionFromUser(user) {
 }
 
 const useIamStore = defineStore('iam', () => {
-    const iamApi = new IamApi();
     const session = ref(loadSession());
     const buyerCompanies = ref([]);
     const providerCompanies = ref([]);
@@ -149,7 +149,10 @@ const useIamStore = defineStore('iam', () => {
                 });
             } catch (registrationError) {
                 if (registrationError?.response?.status === 409) {
-                    fail(registrationError.response.data?.code ?? 'iam.email-exists');
+                    if (registrationError?.response?.data?.code === 'iam.ruc-exists') {
+                        fail('iam.ruc-exists');
+                    }
+                    fail('iam.email-exists');
                 }
                 fail('iam.user-failed');
             }
@@ -212,8 +215,13 @@ const useIamStore = defineStore('iam', () => {
                 : await iamApi.updateBuyerCompany(companyId, companyPayload);
 
             currentCompany.value = updated;
-            session.value = new Session({ ...session.value, name: updated.name });
-            persist();
+            if (updated?.name && session.value) {
+                session.value = new Session({
+                    ...session.value,
+                    name: updated.name,
+                });
+                persist();
+            }
             const directory = isProvider.value ? providerCompanies : buyerCompanies;
             const index = directory.value.findIndex(
                 company => String(company.id) === String(companyId),

@@ -1,9 +1,9 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
-const equipmentPath = import.meta.env.VITE_EQUIPMENT_ENDPOINT_PATH || '/equipment';
-const favoriteProvidersPath = import.meta.env.VITE_FAVORITE_PROVIDERS_ENDPOINT_PATH || '/favorite-providers';
-const refillHistoryPath = import.meta.env.VITE_REFILL_HISTORY_ENDPOINT_PATH || '/refill-history';
+const equipmentPath = import.meta.env.VITE_EQUIPMENT_ENDPOINT_PATH;
+const favoriteProvidersPath = import.meta.env.VITE_FAVORITE_PROVIDERS_ENDPOINT_PATH;
+const refillHistoryPath = import.meta.env.VITE_REFILL_HISTORY_ENDPOINT_PATH;
 
 /**
  * Infrastructure adapter for Equipment HTTP endpoints (equipment, favorites,

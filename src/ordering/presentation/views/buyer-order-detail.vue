@@ -41,10 +41,10 @@ onMounted(async () => {
 const order = computed(() => store.getOrderById(route.params.id));
 
 const providerName = computed(() =>
-    iamStore.providerCompanies.find(p => p.id === order.value?.providerId)?.name ?? `Provider #${order.value?.providerId ?? '—'}`
+  iamStore.providerCompanies.find(p => p.id === order.value?.providerId)?.name ?? `Provider #${order.value?.providerId ?? '—'}`
 );
 const driverName = computed(() =>
-    allDrivers.value.find(d => d.id === order.value?.driverId)?.name ?? t('ordering.not-assigned')
+  allDrivers.value.find(d => d.id === order.value?.driverId)?.name ?? t('ordering.not-assigned')
 );
 const vehicleLabel = computed(() => {
   const v = allVehicles.value.find(x => x.id === order.value?.vehicleId);

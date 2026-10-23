@@ -12,6 +12,7 @@ const buyerOrderDetail    = () => import('./views/buyer-order-detail.vue');
 /**
  * Ordering presentation routes mounted under `/ordering`.
  * Provider views: pending requests + orders. Buyer views: my requests + my orders.
+ * Fully compatible with PrimeFuel reference routes.
  *
  * @type {import('vue-router').RouteRecordRaw[]}
  */
@@ -32,6 +33,8 @@ const orderingRoutes = [
     { path: 'order-list', redirect: 'orders' },
     { path: 'order-detail/:id', redirect: to => `/ordering/orders/${to.params.id}` },
     { path: 'buyer-order/:id', redirect: to => `/ordering/my-orders/${to.params.id}` },
+    { path: 'request-form', redirect: '/catalog' },
+    { path: 'request-form/:id', redirect: '/catalog' },
     // Provider
     { path: 'pending',     name: 'ordering-provider-pending', component: providerRequestList, meta: { title: 'Pending Requests' } },
     { path: 'orders',      name: 'ordering-orders',           component: orderList,           meta: { title: 'Orders' } },

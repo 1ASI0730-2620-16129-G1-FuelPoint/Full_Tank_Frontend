@@ -1,10 +1,4 @@
 <script setup>
-import PvButton from 'primevue/button';
-import PvInputText from 'primevue/inputtext';
-import PvMessage from 'primevue/message';
-import PvSelect from 'primevue/select';
-import PvTextarea from 'primevue/textarea';
-
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
@@ -239,7 +233,7 @@ async function savePassword() {
 </template>
 
 <style scoped>
-.profile-page { width: 100%; max-width: 920px; padding: 2rem 1rem; margin: auto; }
+.profile-page { max-width: 920px; }
 .profile-header { margin-bottom: 1.5rem; }
 .profile-header h1 { font-size: 1.6rem; font-weight: 800; color: #1a2744; margin: 0; }
 .profile-header p { margin: .25rem 0 0; color: #64748b; font-size: .92rem; }

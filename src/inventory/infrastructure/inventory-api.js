@@ -1,8 +1,8 @@
 import { BaseApi } from "../../shared/infrastructure/base-api.js";
 import { BaseEndpoint } from "../../shared/infrastructure/base-endpoint.js";
 
-const inventoryEndpointPath = import.meta.env.VITE_INVENTORY_ENDPOINT_PATH || '/inventory';
-const inventoryMovementsPath = import.meta.env.VITE_INVENTORY_MOVEMENTS_ENDPOINT_PATH || '/inventory-movements';
+const inventoryEndpointPath = import.meta.env.VITE_INVENTORY_ENDPOINT_PATH;
+const inventoryMovementsPath = import.meta.env.VITE_INVENTORY_MOVEMENTS_ENDPOINT_PATH;
 
 /**
  * Infrastructure adapter for Inventory HTTP endpoints.

@@ -20,11 +20,6 @@ const about = () => import('./shared/presentation/views/about.vue');
 const terms = () => import('./shared/presentation/views/terms.vue');
 const pageNotFound = () => import('./shared/presentation/views/page-not-found.vue');
 
-// Dashboard now lives inside the Reporting & Analytics bounded context. The
-// `/dashboard` URL is kept for backward compatibility but resolves to a
-// Reporting & Analytics view (segment home for buyer/provider).
-const dashboardView = () => import('./reporting/presentation/views/dashboard.vue');
-
 const routes = [
     { path: '/', redirect: '/dashboard' },
     { path: '/home', name: 'home', component: homeView, meta: { title: 'Home', public: true } },
@@ -32,8 +27,20 @@ const routes = [
     // IAM — login/register are public (no app shell); profile uses the shell
     { path: '/iam', component: RouterView, children: iamRoutes },
 
-    // Segment home (Reporting & Analytics) + bounded contexts (layout shell)
-    { path: '/dashboard', name: 'dashboard', component: dashboardView, meta: { title: 'Dashboard' } },
+    // Segment home: redirect /dashboard to canonical role dashboard, 100% compatible with PrimeFuel
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        redirect: () => {
+            try {
+                const iamStore = useIamStore(pinia);
+                return iamStore.isBuyer ? '/reporting/buyer-dashboard' : '/reporting/provider-dashboard';
+            } catch {
+                return '/reporting/provider-dashboard';
+            }
+        },
+        meta: { title: 'Dashboard' }
+    },
     { path: '/catalog', component: RouterView, children: catalogRoutes },
     { path: '/equipment', component: RouterView, children: equipmentRoutes },
     { path: '/inventory', component: RouterView, children: inventoryRoutes },
@@ -59,8 +66,10 @@ const PROVIDER_ONLY = [
     '/inventory',
     '/fulfillment',
     '/reporting/provider',
+    '/reporting/provider-dashboard',
     '/reporting/client-reports',
     '/reporting/fulfillment-kpi',
+    '/reporting/report-main',
     '/ordering/pending',
     '/ordering/request-list',
     '/ordering/orders',
@@ -72,9 +81,12 @@ const BUYER_ONLY = [
     '/equipment',
     '/payment',
     '/reporting/buyer',
+    '/reporting/buyer-report',
+    '/reporting/buyer-dashboard',
     '/ordering/my-requests',
     '/ordering/my-orders',
-    '/ordering/buyer-order'
+    '/ordering/buyer-order',
+    '/ordering/request-form'
 ];
 
 const matchesPrefix = (path, prefixes) => prefixes.some(p => path === p || path.startsWith(p + '/'));
@@ -82,12 +94,12 @@ const matchesPrefix = (path, prefixes) => prefixes.some(p => path === p || path.
 /**
  * Global guard: updates the document title, enforces the simulated IAM session
  * and keeps each segment inside its own area. A buyer reaching a provider-only
- * route (or vice versa) is redirected to the dashboard instead of seeing an
- * out-of-context screen.
+ * route (or vice versa) is redirected to their own dashboard instead of seeing
+ * an out-of-context screen.
  *
  * @param {import('vue-router').RouteLocationNormalized} to
  * @param {import('vue-router').RouteLocationNormalized} from
- * @returns {boolean|string}
+ * @returns {boolean|string|object}
  */
 router.beforeEach((to, from) => {
     document.title = `FullTank - ${to.meta['title'] ?? 'B2B Fuel Platform'}`;
@@ -96,14 +108,22 @@ router.beforeEach((to, from) => {
 
     // Authenticated users have no business on the login / register screens.
     const guestOnly = ['/iam', '/iam/login', '/iam/register', '/iam/demo'];
-    if (iamStore.isAuthenticated && guestOnly.includes(to.path)) return '/dashboard';
+    if (iamStore.isAuthenticated && guestOnly.includes(to.path)) {
+        return iamStore.isBuyer ? '/reporting/buyer-dashboard' : '/reporting/provider-dashboard';
+    }
 
     if (to.meta.public) return true;
-    if (!iamStore.isAuthenticated) return '/iam/login';
+    if (!iamStore.isAuthenticated) {
+        return { path: '/iam/login', query: to.fullPath && to.fullPath !== '/' ? { redirect: to.fullPath } : undefined };
+    }
 
-    // Role guards: redirect to the dashboard when the segment doesn't match.
-    if (iamStore.isProvider && matchesPrefix(to.path, BUYER_ONLY)) return '/dashboard';
-    if (!iamStore.isProvider && matchesPrefix(to.path, PROVIDER_ONLY)) return '/dashboard';
+    // Role guards: redirect to the role dashboard when the segment doesn't match.
+    if (iamStore.isProvider && matchesPrefix(to.path, BUYER_ONLY)) {
+        return '/reporting/provider-dashboard';
+    }
+    if (!iamStore.isProvider && matchesPrefix(to.path, PROVIDER_ONLY)) {
+        return '/reporting/buyer-dashboard';
+    }
 
     return true;
 });

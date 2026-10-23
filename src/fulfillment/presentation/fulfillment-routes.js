@@ -6,12 +6,13 @@ const driverForm   = () => import('./views/driver-form.vue');
 
 /**
  * Fulfillment presentation routes mounted under `/fulfillment`.
- * The Dispatch view was removed: dispatching now happens from Ordering.
+ * Fully compatible with PrimeFuel reference routes.
  *
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const fulfillmentRoutes = [
     { path: '', redirect: 'vehicles' },
+    { path: 'dispatch-dashboard', redirect: 'vehicles' },
     { path: 'vehicle-list', redirect: 'vehicles' },
     { path: 'vehicle-form', redirect: 'vehicles/new' },
     { path: 'vehicle-form/:id', redirect: to => `/fulfillment/vehicles/${to.params.id}/edit` },

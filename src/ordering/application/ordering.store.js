@@ -408,7 +408,7 @@ const useOrderingStore = defineStore('ordering', () => {
         const order = getOrderById(orderId);
         if (!order) return null;
         const now = new Date().toISOString();
-        const updated = new Order({ ...order, status: 'PAID', paymentStatus: 'PAID', paidAt: now, updatedAt: now });
+            const updated = new Order({ ...order, status: 'PAID', paymentStatus: 'PAID', paidAt: now, updatedAt: now });
         const index = orders.value.findIndex(item => item.id === updated.id);
         if (index !== -1) orders.value[index] = updated;
         return updated;

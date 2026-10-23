@@ -10,12 +10,9 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { PaymentApi } from "../infrastructure/payment-api.js";
-import { registerPaymentDemoData } from "../infrastructure/fake/payment-demo-data.js";
 import { PaymentAssembler, InvoiceAssembler } from "../infrastructure/payment.assembler.js";
 import { Payment } from "../domain/model/payment.entity.js";
 import { Invoice } from "../domain/model/invoice.entity.js";
-
-registerPaymentDemoData();
 
 const paymentApi = new PaymentApi();
 const IGV_RATE = 0.18;

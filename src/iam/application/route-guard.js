@@ -5,8 +5,10 @@ const PROVIDER_ONLY = [
     '/inventory',
     '/fulfillment',
     '/reporting/provider',
+    '/reporting/provider-dashboard',
     '/reporting/client-reports',
     '/reporting/fulfillment-kpi',
+    '/reporting/report-main',
     '/ordering/pending',
     '/ordering/request-list',
     '/ordering/orders',
@@ -18,9 +20,12 @@ const BUYER_ONLY = [
     '/equipment',
     '/payment',
     '/reporting/buyer',
+    '/reporting/buyer-report',
+    '/reporting/buyer-dashboard',
     '/ordering/my-requests',
     '/ordering/my-orders',
-    '/ordering/buyer-order'
+    '/ordering/buyer-order',
+    '/ordering/request-form'
 ];
 const matches = (path, prefixes) => prefixes.some(prefix => path === prefix || path.startsWith(prefix + '/'));
 

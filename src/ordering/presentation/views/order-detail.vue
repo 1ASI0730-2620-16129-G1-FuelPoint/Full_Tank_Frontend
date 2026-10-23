@@ -46,15 +46,15 @@ const order = computed(() => store.getOrderById(route.params.id));
 
 const statusSeverity = computed(() => orderStatusSeverity(order.value?.status));
 const statusLabel = computed(() =>
-    order.value ? t('ordering.status-' + order.value.status) : '—'
+  order.value ? t('ordering.status-' + order.value.status) : '—'
 );
 
 const buyerName = computed(() =>
-    iamStore.buyerCompanies.find(c => c.id === (order.value?.companyId ?? order.value?.clientId))?.name
+  iamStore.buyerCompanies.find(c => c.id === (order.value?.companyId ?? order.value?.clientId))?.name
     ?? `Company #${order.value?.companyId ?? order.value?.clientId ?? '—'}`
 );
 const driverName = computed(() =>
-    allDrivers.value.find(d => d.id === order.value?.driverId)?.name ?? t('ordering.not-assigned')
+  allDrivers.value.find(d => d.id === order.value?.driverId)?.name ?? t('ordering.not-assigned')
 );
 const vehicleLabel = computed(() => {
   const v = allVehicles.value.find(x => x.id === order.value?.vehicleId);

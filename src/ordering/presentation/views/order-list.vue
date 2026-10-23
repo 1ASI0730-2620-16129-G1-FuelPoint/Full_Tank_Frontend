@@ -25,8 +25,8 @@ onMounted(() => {
 });
 
 const orders = computed(() =>
-    [...store.ordersForProvider(iamStore.currentProviderId)]
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  [...store.ordersForProvider(iamStore.currentProviderId)]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 );
 
 function buyerName(id) {

@@ -1,15 +1,14 @@
 <script setup>
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
-import Layout from './shared/presentation/components/layout.vue';
-import PvToast from 'primevue/toast';
+import Layout from "./shared/presentation/components/layout.vue";
 
 const route = useRoute();
-const hideShell = computed(() => route.meta.noShell === true);
+// Public routes (IAM segment selection) render without the application shell.
+const isPublic = computed(() => route.meta?.public === true);
 </script>
 
 <template>
-  <PvToast />
-  <router-view v-if="hideShell" />
-  <Layout v-else />
+  <router-view v-if="isPublic"/>
+  <Layout v-else/>
 </template>

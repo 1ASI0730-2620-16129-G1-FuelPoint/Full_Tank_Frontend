@@ -24,7 +24,7 @@ onMounted(async () => {
 
 // ── Segment-aware navigation ────────────────────────────────────────────────
 const buyerNav = [
-  { key: 'dashboard',    icon: 'pi pi-home',        label: 'option.dashboard', to: '/dashboard', children: [] },
+  { key: 'dashboard',    icon: 'pi pi-home',        label: 'option.dashboard', to: '/reporting/buyer-dashboard', children: [] },
   { key: 'catalog',      icon: 'pi pi-shopping-bag', label: 'option.catalog',   to: '/catalog', children: [] },
   { key: 'equipment',    icon: 'pi pi-cog',         label: 'option.equipment', to: '/equipment', children: [] },
   { key: 'ordering',     icon: 'pi pi-shopping-cart', label: 'option.ordering', children: [
@@ -37,7 +37,7 @@ const buyerNav = [
 ];
 
 const providerNav = [
-  { key: 'dashboard',    icon: 'pi pi-home',  label: 'option.dashboard', to: '/dashboard', children: [] },
+  { key: 'dashboard',    icon: 'pi pi-home',  label: 'option.dashboard', to: '/reporting/provider-dashboard', children: [] },
   { key: 'inventory',    icon: 'pi pi-box',   label: 'option.inventory', to: '/inventory/products', children: [] },
   { key: 'ordering',     icon: 'pi pi-shopping-cart', label: 'option.ordering', children: [
       { label: 'ordering.pending-requests', to: '/ordering/pending' },
@@ -68,6 +68,8 @@ const toggle = (key) => { expanded.value[key] = !expanded.value[key]; };
 
 const isActive = (to) => {
   if (route.path === to) return true;
+  if (to === '/reporting/buyer-dashboard' && (route.path === '/dashboard' || route.path === '/reporting/buyer-dashboard')) return true;
+  if (to === '/reporting/provider-dashboard' && (route.path === '/dashboard' || route.path === '/reporting/provider-dashboard')) return true;
   const suffix = route.path.slice(to.length);
   return suffix.startsWith('/') && /^\/\d/.test(suffix);
 };

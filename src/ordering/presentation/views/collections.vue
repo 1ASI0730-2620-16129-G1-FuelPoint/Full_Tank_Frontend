@@ -52,8 +52,8 @@ const clientOptions = computed(() => {
 
 const rows = computed(() => {
   let list = filter.value === 'receivable' ? receivable.value
-      : filter.value === 'collected' ? collected.value
-          : [...receivable.value, ...collected.value];
+    : filter.value === 'collected' ? collected.value
+    : [...receivable.value, ...collected.value];
   if (clientFilter.value != null) {
     list = list.filter(o => (o.companyId ?? o.clientId) === clientFilter.value);
   }
