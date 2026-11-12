@@ -9,9 +9,9 @@ const productForm = () => import('./views/product-form.vue');
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const inventoryRoutes = [
-    { path: '', redirect: 'products' },
-    { path: 'product-inventory', redirect: 'products' },
-    { path: 'product-form', redirect: 'products/new' },
+    { path: '', redirect: '/inventory/products' },
+    { path: 'product-inventory', redirect: '/inventory/products' },
+    { path: 'product-form', redirect: '/inventory/products/new' },
     { path: 'product-form/:id', redirect: to => `/inventory/products/${to.params.id}/edit` },
     { path: 'catalog', redirect: '/catalog' },
     { path: 'catalog/provider/:id', redirect: to => `/catalog/providers/${to.params.id}` },

@@ -1,4 +1,5 @@
 <script setup>
+import { unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Payment page (buyer). Route-level orchestrator: it loads pending orders and
  * payment history, and on a `pay` event from the dialog it calls the shared
@@ -195,7 +196,7 @@ function exportHistory() {
               <pv-tag :value="t('ordering.status-' + order.status)" :severity="statusSeverity(order.status)"/>
             </div>
             <div class="pc-fuel">{{ fuelTypeLabel(order.fuelType) }}</div>
-            <div class="pc-meta">{{ order.quantity }} {{ order.unit === 'LITERS' ? 'L' : 'gal' }} · {{ order.deliveryAddress?.split(',')[0] }}</div>
+            <div class="pc-meta">{{ order.quantity }} {{ unitSuffix(order.unit) }} · {{ order.deliveryAddress?.split(',')[0] }}</div>
             <div class="pc-total">{{ money(order.totalAmount) }}</div>
             <pv-button :label="t('payment.pay-now')" icon="pi pi-credit-card" class="pc-btn" @click="openPay(order)"/>
           </template>

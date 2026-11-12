@@ -28,6 +28,23 @@ describe('Ordering Store Audit Regression Tests', () => {
     vi.clearAllMocks();
   });
 
+  it.each([
+    ['fetchOrders', 'getOrders', 'ordersLoaded'],
+    ['fetchRequests', 'getRequests', 'requestsLoaded'],
+  ])('%s lets callers wait for the response and loading state', async (action, method, loaded) => {
+    const store = useOrderingStore();
+    let respond;
+    OrderingApi.prototype[method].mockReturnValueOnce(new Promise(resolve => { respond = resolve; }));
+    const pending = store[action]();
+    expect(store.loading).toBe(true);
+    expect(store[loaded]).toBe(false);
+    expect(pending).toBeInstanceOf(Promise);
+    respond({ status: 200, data: [{ id: 987 }] });
+    await pending;
+    expect(store[loaded]).toBe(true);
+    expect(store.loading).toBe(false);
+  });
+
   describe('updateRequestAsync', () => {
     it('returns the updated FuelRequest entity on success', async () => {
       const store = useOrderingStore();

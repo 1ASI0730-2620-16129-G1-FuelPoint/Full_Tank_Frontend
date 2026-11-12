@@ -1,4 +1,5 @@
 <script setup>
+import { unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Buyer dashboard (home for the buyer/applicant segment). Aggregates read data
  * from Ordering and Equipment for KPIs, a spending trend and quick alerts.
@@ -179,7 +180,7 @@ function goRefillCritical() { router.push('/equipment'); }
             <template #body="{ data }">{{ fuelTypeLabel(data.fuelType) }}</template>
           </pv-column>
           <pv-column field="quantity" :header="t('dashboard.col-volume')">
-            <template #body="{ data }">{{ data.quantity }} {{ data.unit === 'LITERS' ? 'L' : 'gal' }}</template>
+            <template #body="{ data }">{{ data.quantity }} {{ unitSuffix(data.unit) }}</template>
           </pv-column>
           <pv-column field="totalAmount" :header="t('dashboard.col-total')">
             <template #body="{ data }">{{ money(data.totalAmount) }}</template>

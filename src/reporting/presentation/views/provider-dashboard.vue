@@ -7,7 +7,7 @@ import useOrderingStore from '../../../ordering/application/ordering.store.js';
 import useIamStore from '../../../iam/application/iam.store.js';
 import useAnalyticsStore from '../../application/analytics.store.js';
 import { orderStatusSeverity } from '../../../shared/domain/order-status.js';
-import { money } from '../../../shared/domain/helpers.js';
+import { money, unitSuffix } from '../../../shared/domain/helpers.js';
 import pinia from '../../../pinia.js';
 
 const router = useRouter();
@@ -90,7 +90,7 @@ const chartOptions = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function formatVolume(quantity, unit) {
-  return `${Number(quantity).toLocaleString('en-US')} ${unit === 'LITERS' ? 'L' : 'gal'}`;
+  return `${Number(quantity).toLocaleString('en-US')} ${unitSuffix(unit)}`;
 }
 
 function formatEta(order) {

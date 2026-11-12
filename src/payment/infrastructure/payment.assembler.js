@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { Payment } from "../domain/model/payment.entity.js";
 import { Invoice } from "../domain/model/invoice.entity.js";
 
@@ -26,7 +27,7 @@ export class PaymentAssembler {
  */
 export class InvoiceAssembler {
     static toEntityFromResource(resource) {
-        return new Invoice({ ...resource });
+        return new Invoice({ ...resource, unit: resource.unit == null ? undefined : normalizeFuelUnit(resource.unit) });
     }
 
     static toEntitiesFromResponse(response) {

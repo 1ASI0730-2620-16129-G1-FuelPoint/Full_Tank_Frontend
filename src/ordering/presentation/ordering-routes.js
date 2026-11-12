@@ -29,8 +29,8 @@ const orderingRoutes = [
         }
     },
     // Backward compatibility aliases for PrimeFuel Angular routes
-    { path: 'request-list', redirect: 'pending' },
-    { path: 'order-list', redirect: 'orders' },
+    { path: 'request-list', redirect: '/ordering/pending' },
+    { path: 'order-list', redirect: '/ordering/orders' },
     { path: 'order-detail/:id', redirect: to => `/ordering/orders/${to.params.id}` },
     { path: 'buyer-order/:id', redirect: to => `/ordering/my-orders/${to.params.id}` },
     { path: 'request-form', redirect: '/catalog' },

@@ -8,6 +8,14 @@
 
 export const LITERS_PER_GALLON = 3.78541;
 
+/** Canonicalizes the short unit codes returned by the .NET API without changing quantities. */
+export function normalizeFuelUnit(unit) {
+    const value = String(unit ?? '').trim().toUpperCase();
+    if (['L', 'LT', 'LITER', 'LITERS'].includes(value)) return 'LITERS';
+    if (['GAL', 'GL', 'GALLON', 'GALLONS'].includes(value)) return 'GALLONS';
+    return value;
+}
+
 /**
  * Converts a quantity to liters for unit-agnostic comparisons (stock, capacity).
  * @param {number} quantity
@@ -15,7 +23,7 @@ export const LITERS_PER_GALLON = 3.78541;
  * @returns {number}
  */
 export function toLiters(quantity, unit) {
-    return unit === 'GALLONS' ? Number(quantity || 0) * LITERS_PER_GALLON : Number(quantity || 0);
+    return normalizeFuelUnit(unit) === 'GALLONS' ? Number(quantity || 0) * LITERS_PER_GALLON : Number(quantity || 0);
 }
 
 /**
@@ -25,7 +33,7 @@ export function toLiters(quantity, unit) {
  * @returns {number}
  */
 export function fromLiters(liters, unit) {
-    return unit === 'GALLONS' ? Number(liters || 0) / LITERS_PER_GALLON : Number(liters || 0);
+    return normalizeFuelUnit(unit) === 'GALLONS' ? Number(liters || 0) / LITERS_PER_GALLON : Number(liters || 0);
 }
 
 /**
@@ -55,7 +63,11 @@ export function mapEmbedUrl(address) {
  * @returns {string}
  */
 export function unitSuffix(unit) {
-    return unit === 'LITERS' ? 'L' : 'gal';
+    const normalized = normalizeFuelUnit(unit);
+    if (normalized === 'LITERS') return 'L';
+    if (normalized === 'GALLONS') return 'gal';
+    if (normalized === 'M3') return 'm³';
+    return normalized;
 }
 
 /**

@@ -1,4 +1,5 @@
 <script setup>
+import { unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Equipment card (presentational child). Emits `edit`, `delete`,
  * `request-refill` and `toggle-auto`. Holds no store reference; the parent page
@@ -45,7 +46,7 @@ const barColor = computed(() => pct.value <= props.equipment.refillThreshold / 2
     <div class="eq-level">
       <div class="level-top">
         <span>{{ t('equipment.fuel-level') }}</span>
-        <span class="level-val">{{ equipment.currentLevel }} / {{ equipment.capacity }} {{ equipment.unit === 'LITERS' ? 'L' : 'gal' }}</span>
+        <span class="level-val">{{ equipment.currentLevel }} / {{ equipment.capacity }} {{ unitSuffix(equipment.unit) }}</span>
       </div>
       <div class="bar"><div class="bar-fill" :style="{ width: pct + '%', background: barColor }"/></div>
       <div class="level-pct">{{ pct }}%</div>
