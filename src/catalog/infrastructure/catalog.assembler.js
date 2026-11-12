@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { CatalogProduct } from "../domain/model/catalog-product.entity.js";
 import { Provider } from "../domain/model/provider.entity.js";
 
@@ -35,7 +36,7 @@ export class CatalogAssembler {
                 pricePerLiter: tank.pricePerLiter,
                 stock: availableStock,
                 capacity: tank.capacity,
-                unit: tank.unit,
+                unit: normalizeFuelUnit(tank.unit),
                 active: ['ACTIVE', 'AVAILABLE'].includes(status),
                 available: ['ACTIVE', 'AVAILABLE'].includes(status) && availableStock > 0,
             });

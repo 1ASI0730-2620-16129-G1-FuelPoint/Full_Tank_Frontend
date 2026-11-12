@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { Product } from "../domain/model/product.entity.js";
 
 /**
@@ -11,7 +12,7 @@ export class ProductAssembler {
      * @returns {Product} Product entity.
      */
     static toEntityFromResource(resource) {
-        return new Product({ ...resource });
+        return new Product({ ...resource, unit: resource.unit == null ? undefined : normalizeFuelUnit(resource.unit) });
     }
 
     /**

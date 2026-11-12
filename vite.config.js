@@ -11,7 +11,7 @@ const primeVueOverlays = new Set([
 ]);
 const primeVueData = new Set(['column', 'datatable', 'row']);
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [vue()],
   server: {
     host: '127.0.0.1',
@@ -21,6 +21,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['./tests/setup.js'],
+    include: mode === 'integration' ? ['tests/integration/**/*.spec.js'] : ['tests/*.spec.js'],
+    testTimeout: mode === 'integration' ? 15000 : 5000,
   },
 
   build: {
@@ -44,4 +46,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

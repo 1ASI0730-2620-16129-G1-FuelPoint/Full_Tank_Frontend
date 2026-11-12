@@ -9,7 +9,7 @@ import { useRoute, useRouter } from 'vue-router';
 import useOrderingStore from '../../application/ordering.store.js';
 import useIamStore from '../../../iam/application/iam.store.js';
 import { fuelTypeLabel } from '../../../shared/domain/fuel-types.js';
-import { formatDate as fmtDate } from '../../../shared/domain/helpers.js';
+import { formatDate as fmtDate, unitSuffix } from '../../../shared/domain/helpers.js';
 import pinia from '../../../pinia.js';
 
 const { t, locale } = useI18n();
@@ -89,7 +89,7 @@ function formatDate(val) {
             <template #body="{ data }">{{ fuelTypeLabel(data.fuelType) }}</template>
           </pv-column>
           <pv-column :header="t('ordering.col-quantity')">
-            <template #body="{ data }">{{ data.quantity }} {{ data.unit === 'LITERS' ? 'L' : 'gal' }}</template>
+            <template #body="{ data }">{{ data.quantity }} {{ unitSuffix(data.unit) }}</template>
           </pv-column>
           <pv-column :header="t('ordering.col-address')">
             <template #body="{ data }"><span class="addr" :title="data.deliveryAddress">{{ data.deliveryAddress || '—' }}</span></template>

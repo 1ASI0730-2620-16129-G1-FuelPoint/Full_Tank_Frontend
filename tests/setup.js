@@ -5,6 +5,7 @@ import { beforeEach } from 'vitest';
 // instantiate safely without relying on a live backend network.
 
 const testEnv = {
+  VITE_USE_FAKE_API: import.meta.env.MODE === 'integration' ? 'false' : 'true',
   VITE_FULLTANK_API_URL: 'http://localhost:5204/api/v1',
   VITE_INVENTORY_ENDPOINT_PATH: '/inventory-items',
   VITE_INVENTORY_MOVEMENTS_ENDPOINT_PATH: '/inventory-movements',

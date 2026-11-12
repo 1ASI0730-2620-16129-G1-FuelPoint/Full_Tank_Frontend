@@ -29,11 +29,11 @@ const reportingRoutes = [
     { path: 'buyer-dashboard', name: 'reporting-buyer-dashboard', component: buyerDashboard, meta: { title: 'Buyer Dashboard' } },
     { path: 'provider-dashboard', name: 'reporting-provider-dashboard', component: providerDashboard, meta: { title: 'Provider Dashboard' } },
     { path: 'buyer', name: 'reporting-buyer', component: buyerReport, meta: { title: 'My Reports' } },
-    { path: 'buyer-report', redirect: 'buyer' },
+    { path: 'buyer-report', redirect: '/reporting/buyer' },
     { path: 'provider', name: 'reporting-provider', component: providerReport, meta: { title: 'Reports & Analytics' } },
-    { path: 'report-main', redirect: 'provider' },
-    { path: 'client-reports', redirect: 'provider' },
-    { path: 'fulfillment-kpi', redirect: 'provider' },
+    { path: 'report-main', redirect: '/reporting/provider' },
+    { path: 'client-reports', redirect: '/reporting/provider' },
+    { path: 'fulfillment-kpi', redirect: '/reporting/provider' },
     { path: 'legacy-dashboard', name: 'reporting-legacy-dashboard', component: dashboardView, meta: { title: 'Dashboard' } },
 ];
 

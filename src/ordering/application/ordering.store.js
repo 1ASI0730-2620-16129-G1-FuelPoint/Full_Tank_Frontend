@@ -83,7 +83,7 @@ const useOrderingStore = defineStore('ordering', () => {
     // ── Request actions ─────────────────────────────────────────────────────
     function fetchRequests() {
         loading.value = true;
-        orderingApi.getRequests().then(response => {
+        return orderingApi.getRequests().then(response => {
             requests.value = RequestAssembler.toEntitiesFromResponse(response);
             requestsLoaded.value = true;
         }).catch(error => {
@@ -160,7 +160,7 @@ const useOrderingStore = defineStore('ordering', () => {
     function fetchOrders() {
         loading.value = true;
         if (!useOrdersEndpoint) {
-            orderingApi.getRequests().then(response => {
+            return orderingApi.getRequests().then(response => {
                 requests.value = RequestAssembler.toEntitiesFromResponse(response);
                 requestsLoaded.value = true;
                 orders.value = ordersFromRequests(requests.value);
@@ -170,10 +170,9 @@ const useOrderingStore = defineStore('ordering', () => {
             }).finally(() => {
                 loading.value = false;
             });
-            return;
         }
 
-        orderingApi.getOrders().then(response => {
+        return orderingApi.getOrders().then(response => {
             orders.value = OrderAssembler.toEntitiesFromResponse(response);
             ordersLoaded.value = true;
         }).catch(error => {
