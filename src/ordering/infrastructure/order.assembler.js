@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { Order } from '../domain/model/order.entity.js';
 
 /**
@@ -13,6 +14,7 @@ export class OrderAssembler {
     static toEntityFromResource(resource) {
         return new Order({
             ...resource,
+            unit: resource.unit == null ? undefined : normalizeFuelUnit(resource.unit),
             companyId: resource.companyId ?? resource.buyerCompanyId,
             clientId: resource.clientId ?? resource.buyerCompanyId,
         });

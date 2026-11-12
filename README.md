@@ -1,62 +1,97 @@
-# FullTank — base compartida e IAM
+# FullTank — integración con el backend .NET
 
-Base mínima de la aplicación Vue para integrar los BC por PR. El código previo fue desarrollado por Brayan; esta entrega reutiliza su configuración, recursos y utilidades, y adapta el arranque para funcionar sin los módulos pendientes.
+Aplicación Vue con IAM, catálogo, inventario, equipos, pedidos, entregas,
+pagos simulados, notificaciones y reportes. Esta copia usa la API real por defecto.
 
-## Ejecutar
+## Ejecutar en local
 
-Requiere Node.js 22.12+ (o 20.19+) y npm.
+Requisitos: Node.js 22.12+ y npm, SDK .NET 10 y **PostgreSQL 18**.
+El proveedor `MySql.EntityFrameworkCore` del backend no permite ejecutar sus
+migraciones con la versión de MariaDB comprobada en esta integración.
 
-```bash
-npm ci
-npm run dev
-```
+1. Iniciar PostgreSQL en `127.0.0.1:5432`. Configurar la conexión y el secreto JWT
+   en `../backend-main/TechnoSac.FullTank.Platform/appsettings.Local.json`
+   (archivo ignorado por Git), o mediante variables de entorno .NET.
+   No usar credenciales de producción en estas pruebas.
+2. Iniciar la API desde `../backend-main`:
 
-Abrir `http://127.0.0.1:5173`. El modo demo está habilitado por defecto y no necesita backend. También puede iniciarse con `npm run dev -- --mode demo`.
+   ```bash
+   Database__ApplyMigrationsOnStartup=true dotnet run \
+     --project TechnoSac.FullTank.Platform --launch-profile http
+   ```
 
-```bash
-npm run build:demo
-npm test
-npm run preview
-```
+   En Development se aplican las migraciones y el seeder de cuentas demo.
+   Revisar el log de arranque: Swagger puede abrir aunque falle la conexión
+   a la base de datos. Swagger: `http://localhost:5204/swagger`.
+3. Desde esta carpeta, preparar el frontend:
 
-## Alcance
+   ```bash
+   npm ci
+   # Solo si todavía no existe .env:
+   cp -n .env.example .env
+   npm run dev
+   ```
 
-Incluye Vue, Pinia, PrimeVue y dependencias comunes, ES/EN, pantalla inicial, layout responsive, página 404, recursos y utilidades de `shared`, cliente HTTP y adaptador demo extensible. IAM añade inicio de sesión, registro de compradores/proveedores, perfil de empresa, cambio de correo/contraseña y permisos de navegación.
+   Abrir `http://127.0.0.1:5173`. El backend admite CORS desde ese origen
+   y desde `http://localhost:5173`.
 
-Rutas disponibles: `/`, `/iam/login`, `/iam/register`, `/iam/profile`, `/iam/demo` y 404. Aún faltan catalog, equipment, inventory, fulfillment, ordering, payment, notification y reporting, además de la coordinación entre BC y el despliegue.
+La conexión usa `VITE_USE_FAKE_API=false` y
+`VITE_FULLTANK_API_URL=http://localhost:5204/api/v1`.
+Las peticiones privadas envían el JWT guardado en `fulltank.session`.
+Las variables `VITE_*` son públicas: nunca incluir secretos en ellas.
 
-Las reglas y datos demo de IAM están en `src/iam/infrastructure/fake/`; shared ofrece CRUD genérico y registro de handlers por módulo. Las rutas de API no registradas responden 404. Cada responsable incorpora sus datos y operaciones al adaptar su módulo.
-
-## Cuentas demo
+## Cuentas locales de prueba
 
 | Rol | Correo | Contraseña |
 |---|---|---|
 | Comprador | `logistics@transportesdelsur.com` | `123456` |
 | Proveedor | `dispatch@petroandes.com` | `123456` |
 
-La sesión se guarda en localStorage. Los datos, cuentas nuevas y cambios del demo están en memoria y se reinician al recargar la página; las cuentas iniciales pueden restaurar su sesión. Una sesión cuyo usuario ya no existe se elimina. Este mecanismo es una simulación académica, no autenticación de producción.
+Las crea el seeder del backend en Development. Las operaciones reales persisten
+sobre PostgreSQL. El pago está simulado para fines académicos; no procesa dinero.
 
-## Incorporar un BC
+## Validaciones
 
-Después de integrar `feat/shared` en `develop`, crear la rama correspondiente desde ese `develop`: `feat/iam`, `feat/catalog`, `feat/equipment`, `feat/inventory`, `feat/fulfillment`, `feat/ordering`, `feat/payment`, `feat/notification` o `feat/reporting`. Las mejoras comunes siguen en `feat/shared`, sin sufijos.
-
-1. Incorporar únicamente `src/<bc>/` y las pruebas del módulo.
-2. Agregar sus claves de traducción y variables públicas de endpoints.
-3. Registrar sus rutas en `src/router.js`. Las rutas requieren sesión por defecto: usar `meta.public: true` para rutas públicas, `meta.roles: ['BUYER']` o `['PROVIDER']` para permisos explícitos y `meta.noShell: true` para pantallas sin layout. El guard conserva los permisos por prefijo del proyecto previo sin importar otros BC. Importar los componentes PrimeVue que use cada vista (por ejemplo `import PvButton from 'primevue/button'`). ToastService ya está registrado.
-4. Para colecciones demo, registrar sus datos al arrancar el módulo:
-
-```js
-import { registerFakeCollection } from '../../shared/infrastructure/fake/fake-database.js';
-registerFakeCollection('/endpoint-del-bc', [{ id: 1 }]);
+```bash
+npm test                  # Pruebas aisladas: usan el adaptador en memoria
+npm run build             # Compilación con la configuración de integración
+npm run test:integration  # API real y PostgreSQL, con ambos servicios disponibles
 ```
 
-El ejemplo corresponde a un archivo en `src/<bc>/infrastructure/`. Ajustar rutas/nombres y usar los contratos reales del BC. Para comandos de negocio, importar `registerFakeHandler` del mismo archivo y registrar callbacks del BC que reciban `{ body, params, query }` y devuelvan `{ status, data }`. La ruta puede ser un string exacto o una expresión regular con grupos nombrados; las reglas del negocio permanecen en el BC. No reemplazar registros de otros módulos.
+La suite `tests/integration/backend.spec.js` usa los adaptadores y stores de la
+aplicación contra `localhost:5204`. Verifica autenticación, CORS, restricciones
+por rol, catálogo, favoritos, valoraciones, equipos, flota, reportes,
+notificaciones, registro y el ciclo solicitud → aprobación → despacho →
+recepción → pago simulado → factura. Comprueba persistencia, reserva y
+consumo de stock. **Crea empresas y operaciones; ejecutarla solo con una base
+local descartable.** No requiere reiniciar los datos para cada ejecución.
 
-5. Ejecutar build demo y pruebas; revisar `git diff --stat origin/develop...HEAD`.
-6. Abrir PR a `develop`, indicando el código reutilizado y los cambios propios. Otro integrante revisa antes del merge.
+El backend tiene su propia suite:
 
-Los commits nuevos usan inglés imperativo: `feat(iam): add authentication views and route guards`. No mezclar el historial del zip anterior ni aplicar el import completo. Los aportes anteriores se recuperan selectivamente de las etiquetas `backup/tb1-restart-2026-10-08/<rama>`, conservando sus autores. Con GitFlow, la aplicación completa pasa a `main` por una rama `release/<version>` después de integrar y verificar todos los BC; los ajustes de release vuelven también a `develop`.
+```bash
+cd ../backend-main
+dotnet test full-tank-platform.sln
+```
 
-## Archivos generados
+El frontend normaliza los códigos de unidad de la API (`L`, `LT`, `GAL`, etc.)
+al leer recursos. No cambia las cantidades; muestra `M3` como `m³` y conserva
+unidades desconocidas en vez de presentarlas como galones.
 
-`node_modules`, `dist`, `.firebase`, archivos de entorno locales y cobertura están ignorados. Nunca incluir secretos en variables `VITE_*`: su contenido se publica en el navegador.
+## Demo sin backend
+
+```bash
+npm run dev -- --mode demo
+npm run build:demo
+```
+
+`.env.demo` mantiene el adaptador en memoria. `npm test` permanece aislado
+independientemente del modo real configurado en `.env`.
+
+## Alcance del despliegue
+
+La validación descrita es local. Para publicar se necesita configurar la URL
+HTTPS del backend, los orígenes CORS del frontend y la conexión PostgreSQL del entorno.
+
+## Publicación desde GitHub
+
+Ver [configuración del workflow](docs/despliegue-github.md). El despliegue de Firebase usa la API real y solo se ejecuta desde `main`.

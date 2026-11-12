@@ -8,7 +8,8 @@
     "build": "vite build",
     "build:demo": "vite build --mode demo",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:integration": "vitest run --mode integration"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",

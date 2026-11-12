@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { Request } from "../domain/model/request.entity.js";
 
 /**
@@ -13,6 +14,7 @@ export class RequestAssembler {
     static toEntityFromResource(resource) {
         return new Request({
             ...resource,
+            unit: resource.unit == null ? undefined : normalizeFuelUnit(resource.unit),
             companyId: resource.companyId ?? resource.buyerCompanyId,
             clientId: resource.clientId ?? resource.buyerCompanyId,
         });

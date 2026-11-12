@@ -1,4 +1,5 @@
 <script setup>
+import { unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Provider detail page (buyer). Route-level coordinator: shows a provider's
  * products and a request panel. When the panel emits `create-request`, this page
@@ -159,11 +160,11 @@ function money(v) { return `S/ ${Number(v).toFixed(2)}`; }
               <div class="prod-fuel">{{ fuelTypeLabel(product.fuelType) }} · {{ product.description }}</div>
               <div class="prod-stock">
                 <i class="pi pi-database"/>
-                {{ t('catalog.stock') }}: {{ product.stock.toLocaleString() }} {{ product.unit === 'LITERS' ? 'L' : 'gal' }}
+                {{ t('catalog.stock') }}: {{ product.stock.toLocaleString() }} {{ unitSuffix(product.unit) }}
               </div>
             </div>
             <div class="prod-right">
-              <div class="prod-price">{{ money(product.pricePerLiter) }}<span class="per">/{{ product.unit === 'LITERS' ? 'L' : 'gal' }}</span></div>
+              <div class="prod-price">{{ money(product.pricePerLiter) }}<span class="per">/{{ unitSuffix(product.unit) }}</span></div>
               <pv-tag
                   :value="product.available ? t('catalog.available') : t('catalog.unavailable')"
                   :severity="product.available ? 'success' : 'danger'"

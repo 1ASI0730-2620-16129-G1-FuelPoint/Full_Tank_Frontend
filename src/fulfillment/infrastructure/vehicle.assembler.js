@@ -1,3 +1,4 @@
+import { normalizeFuelUnit } from "../../shared/domain/helpers.js";
 import { Vehicle } from "../domain/model/vehicle.entity.js";
 
 /**
@@ -11,7 +12,7 @@ export class VehicleAssembler {
      * @returns {Vehicle} Vehicle entity.
      */
     static toEntityFromResource(resource) {
-        return new Vehicle({ ...resource });
+        return new Vehicle({ ...resource, unit: resource.unit == null ? undefined : normalizeFuelUnit(resource.unit) });
     }
 
     /**

@@ -1,60 +1,84 @@
-name: CI/CD Pipeline - FullTank Frontend
-
+name: Frontend checks and Firebase deployment
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
-
+    branches: [main, develop]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   test-and-build:
-    name: Automated Tests & Production Build
     runs-on: ubuntu-latest
+    env:
+      VITE_USE_FAKE_API: 'false'
+      VITE_FULLTANK_API_URL: ${{ vars.BACKEND_API_URL }}
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Run Vitest Unit & Integration Tests
-        run: npm test
-
-      - name: Build Production Demo Bundle
-        run: npm run build:demo
-
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Check production API configuration
+        run: |
+          node --input-type=module <<'JS'
+          const api = new URL(process.env.VITE_FULLTANK_API_URL);
+          if (api.protocol !== 'https:' || !api.pathname.endsWith('/api/v1') || ['localhost','127.0.0.1'].includes(api.hostname)) {
+            throw new Error('BACKEND_API_URL must be the public HTTPS backend URL ending in /api/v1.');
+          }
+          JS
+      - name: Build frontend connected to the real backend
+        run: npm run build
+      - name: Record deployed version
+        run: |
+          node --input-type=module <<'JS'
+          import { writeFileSync } from 'node:fs';
+          writeFileSync('dist/deployment.json', JSON.stringify({commit: process.env.GITHUB_SHA, api: process.env.VITE_FULLTANK_API_URL, simulatedApi: false}));
+          JS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+          retention-days: 7
   deploy:
-    name: Deploy to Firebase Hosting
     needs: test-and-build
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Build Production Demo Bundle
-        run: npm run build:demo
-
-      - name: Deploy to Firebase Hosting
+          node-version: '22'
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+      - name: Wait for backend readiness
+        env:
+          BACKEND_API_URL: ${{ vars.BACKEND_API_URL }}
+        run: |
+          for attempt in $(seq 1 12); do
+            if curl --fail --silent --show-error --max-time 15 "${BACKEND_API_URL%/api/v1}/health"; then exit 0; fi
+            sleep 5
+          done
+          echo 'Backend is not ready; Firebase release was not published.' >&2
+          exit 1
+      - name: Deploy verified artifact to Firebase Hosting
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-        run: npx firebase-tools deploy --only hosting --token "$FIREBASE_TOKEN"
+        run: |
+          test -n "$FIREBASE_TOKEN" || { echo 'FIREBASE_TOKEN is missing.' >&2; exit 1; }
+          npx --yes firebase-tools@15.36.0 deploy --only hosting --project full-tank-964e2 --non-interactive
+      - name: Verify published version
+        run: |
+          curl --fail --silent --show-error --retry 5 --retry-delay 5 'https://full-tank-964e2.web.app/deployment.json' -o /tmp/published.json
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          const version = JSON.parse(readFileSync('/tmp/published.json', 'utf8'));
+          if (version.commit !== process.env.GITHUB_SHA || version.simulatedApi !== false) throw new Error('Published frontend does not match this commit.');
+          JS

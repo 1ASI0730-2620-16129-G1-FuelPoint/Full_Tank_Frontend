@@ -11,13 +11,13 @@ const driverForm   = () => import('./views/driver-form.vue');
  * @type {import('vue-router').RouteRecordRaw[]}
  */
 const fulfillmentRoutes = [
-    { path: '', redirect: 'vehicles' },
-    { path: 'dispatch-dashboard', redirect: 'vehicles' },
-    { path: 'vehicle-list', redirect: 'vehicles' },
-    { path: 'vehicle-form', redirect: 'vehicles/new' },
+    { path: '', redirect: '/fulfillment/vehicles' },
+    { path: 'dispatch-dashboard', redirect: '/fulfillment/vehicles' },
+    { path: 'vehicle-list', redirect: '/fulfillment/vehicles' },
+    { path: 'vehicle-form', redirect: '/fulfillment/vehicles/new' },
     { path: 'vehicle-form/:id', redirect: to => `/fulfillment/vehicles/${to.params.id}/edit` },
-    { path: 'driver-list', redirect: 'drivers' },
-    { path: 'driver-form', redirect: 'drivers/new' },
+    { path: 'driver-list', redirect: '/fulfillment/drivers' },
+    { path: 'driver-form', redirect: '/fulfillment/drivers/new' },
     { path: 'driver-form/:id', redirect: to => `/fulfillment/drivers/${to.params.id}/edit` },
     { path: 'vehicles',          name: 'fulfillment-vehicles',      component: vehicleList,  meta: { title: 'Fleet Management' } },
     { path: 'vehicles/new',      name: 'fulfillment-vehicle-new',   component: vehicleForm,  meta: { title: 'Add Vehicle' } },

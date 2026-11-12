@@ -1,4 +1,5 @@
 <script setup>
+import { unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Presentational invoice document. Receives an invoice via props and renders it.
  * It owns no state and reaches into no store — pure presentation.
@@ -64,7 +65,7 @@ function formatDate(iso) {
       <tbody>
         <tr>
           <td>{{ fuelTypeLabel(invoice.fuelType) }}</td>
-          <td class="num">{{ invoice.quantity }} {{ invoice.unit === 'LITERS' ? 'L' : 'gal' }}</td>
+          <td class="num">{{ invoice.quantity }} {{ unitSuffix(invoice.unit) }}</td>
           <td class="num">{{ money(invoice.unitPrice) }}</td>
           <td class="num">{{ money(invoice.subtotal) }}</td>
         </tr>
