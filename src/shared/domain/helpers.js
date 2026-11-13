@@ -81,9 +81,10 @@ export function unitSuffix(unit) {
  * @param {string|Date} value
  * @param {string} [locale='en-US']
  * @param {boolean|null} [withTime=null] - Force time on/off; null = auto (off for date-only).
+ * @param {'short'|'long'} [monthStyle='short'] - Month display format.
  * @returns {string}
  */
-export function formatDate(value, locale = 'en-US', withTime = null) {
+export function formatDate(value, locale = 'en-US', withTime = null, monthStyle = 'short') {
     if (!value) return '';
     const isDateOnly = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
     let date;
@@ -94,7 +95,7 @@ export function formatDate(value, locale = 'en-US', withTime = null) {
         date = new Date(value);
     }
     const showTime = withTime === null ? !isDateOnly : withTime;
-    const opts = { year: 'numeric', month: 'short', day: 'numeric' };
+    const opts = { year: 'numeric', month: monthStyle, day: 'numeric' };
     if (showTime) { opts.hour = '2-digit'; opts.minute = '2-digit'; }
     const tag = (locale === 'es' || locale === 'es-419') ? 'es-419' : 'en-US';
     return date.toLocaleString(tag, opts);

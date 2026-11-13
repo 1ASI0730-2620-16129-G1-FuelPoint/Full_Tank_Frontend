@@ -28,6 +28,12 @@ const iamStore = useIamStore(pinia);
 const assignVisible = ref(false);
 const availableDrivers = ref([]);
 const availableVehicles = ref([]);
+const vehicleOptions = computed(() =>
+  availableVehicles.value.map(v => ({
+    ...v,
+    label: `${v.plate} · ${v.brand} ${v.model}`.trim(),
+  }))
+);
 const allDrivers = ref([]);
 const allVehicles = ref([]);
 const selectedDriver = ref(null);
@@ -268,7 +274,7 @@ async function confirmAssign() {
       </div>
       <div class="assign-field">
         <label>{{ t('ordering.vehicle') }}</label>
-        <pv-select v-model="selectedVehicle" :options="availableVehicles" option-value="id" class="w-full" :placeholder="t('ordering.vehicle')">
+        <pv-select v-model="selectedVehicle" :options="vehicleOptions" option-label="label" option-value="id" class="w-full" :placeholder="t('ordering.vehicle')">
           <template #value="{ value }">
             <span v-if="value">{{ availableVehicles.find(v => v.id === value)?.plate }} · {{ availableVehicles.find(v => v.id === value)?.brand }}</span>
           </template>
