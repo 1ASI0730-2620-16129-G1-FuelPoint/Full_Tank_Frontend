@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { normalizeFuelUnit, unitSuffix, toLiters, fromLiters } from '../src/shared/domain/helpers.js';
+import { normalizeFuelUnit, unitSuffix, toLiters, fromLiters, formatDate } from '../src/shared/domain/helpers.js';
 import { CatalogAssembler } from '../src/catalog/infrastructure/catalog.assembler.js';
 import { ProductAssembler } from '../src/inventory/infrastructure/product.assembler.js';
 import { EquipmentAssembler } from '../src/equipment/infrastructure/equipment.assembler.js';
@@ -34,5 +34,8 @@ describe('units from the real API', () => {
         const [product] = CatalogAssembler.toProductsFromResponse({ status: 200, data: [resource] });
         expect(product.unit).toBe('LITERS');
         expect(product.stock).toBe(75);
+    });
+    it('formats date-only invoice strings without shifting backward across timezones', () => {
+        expect(formatDate('2026-11-12', 'en-US', false, 'long')).toBe('November 12, 2026');
     });
 });

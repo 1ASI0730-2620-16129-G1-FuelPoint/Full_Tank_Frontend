@@ -1,5 +1,5 @@
 <script setup>
-import { unitSuffix } from '../../../shared/domain/helpers.js';
+import { formatDate as fmtDate, unitSuffix } from '../../../shared/domain/helpers.js';
 /**
  * Presentational invoice document. Receives an invoice via props and renders it.
  * It owns no state and reaches into no store — pure presentation.
@@ -7,7 +7,7 @@ import { unitSuffix } from '../../../shared/domain/helpers.js';
 import { useI18n } from 'vue-i18n';
 import { fuelTypeLabel } from '../../../shared/domain/fuel-types.js';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 defineProps({
   /** @type {import('vue').PropType<Object>} */
@@ -18,7 +18,7 @@ function money(value) {
   return `S/ ${Number(value ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 function formatDate(iso) {
-  return iso ? new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+  return fmtDate(iso, locale.value, false, 'long');
 }
 </script>
 

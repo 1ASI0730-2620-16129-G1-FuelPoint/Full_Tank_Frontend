@@ -14,6 +14,8 @@ import useInventoryStore from '../src/inventory/application/inventory.store.js';
 import useFulfillmentStore from '../src/fulfillment/application/fulfillment.store.js';
 import useEquipmentStore from '../src/equipment/application/equipment.store.js';
 import useNotificationStore from '../src/notification/application/notification.store.js';
+import useIamStore from '../src/iam/application/iam.store.js';
+import { Session } from '../src/iam/domain/model/session.entity.js';
 import { Request } from '../src/ordering/domain/model/request.entity.js';
 import { Order } from '../src/ordering/domain/model/order.entity.js';
 import { Product } from '../src/inventory/domain/model/product.entity.js';
@@ -181,19 +183,29 @@ describe('Coordination Service Single-Call Orchestration & Guards', () => {
     it('confirmOrderReception delegates to confirmReception and returns { ok: true, order }', async () => {
       const orderingStore = useOrderingStore(pinia);
       const equipmentStore = useEquipmentStore(pinia);
+      const fulfillmentStore = useFulfillmentStore(pinia);
+      const iamStore = useIamStore(pinia);
 
-      const order = new Order({ id: 201, status: 'DISPATCHED' });
-      const receivedOrder = new Order({ id: 201, status: 'PENDING_PAYMENT' });
+      iamStore.session = new Session({ role: 'BUYER', companyId: 5 });
+      fulfillmentStore.drivers = [{ id: 1, name: 'Driver' }];
+      fulfillmentStore.vehicles = [{ id: 2, plate: 'ABC-123' }];
+
+      const order = new Order({ id: 201, providerId: 5, status: 'DISPATCHED' });
+      const receivedOrder = new Order({ id: 201, providerId: 5, status: 'PENDING_PAYMENT' });
       equipmentStore.loaded = true;
 
       const receiveSpy = vi.spyOn(orderingStore, 'confirmReception').mockResolvedValue(receivedOrder);
       const eqSpy = vi.spyOn(equipmentStore, 'fetchEquipment').mockResolvedValue([]);
+      const driverSpy = vi.spyOn(fulfillmentStore, 'fetchDrivers');
+      const vehicleSpy = vi.spyOn(fulfillmentStore, 'fetchVehicles');
 
       const result = await confirmOrderReception({ order });
 
       expect(receiveSpy).toHaveBeenCalledWith(order);
       expect(result).toEqual({ ok: true, order: receivedOrder });
       expect(eqSpy).toHaveBeenCalled();
+      expect(driverSpy).not.toHaveBeenCalled();
+      expect(vehicleSpy).not.toHaveBeenCalled();
     });
 
     it('cancelAcceptedOrder delegates to cancelOrder and returns { ok: true, order }', async () => {
