@@ -33,9 +33,11 @@ const allVehicles = ref([]);
 onMounted(async () => {
   await store.fetchOrders();
   if (!iamStore.providerCompanies.length) await iamStore.fetchDirectories();
-  const all = await listAllResources(order.value?.providerId);
-  allDrivers.value = all.drivers;
-  allVehicles.value = all.vehicles;
+  if (iamStore.isProvider && order.value?.providerId) {
+    const all = await listAllResources(order.value.providerId);
+    allDrivers.value = all.drivers;
+    allVehicles.value = all.vehicles;
+  }
 });
 
 const order = computed(() => store.getOrderById(route.params.id));
@@ -43,12 +45,15 @@ const order = computed(() => store.getOrderById(route.params.id));
 const providerName = computed(() =>
   iamStore.providerCompanies.find(p => p.id === order.value?.providerId)?.name ?? `Provider #${order.value?.providerId ?? '—'}`
 );
-const driverName = computed(() =>
-  allDrivers.value.find(d => d.id === order.value?.driverId)?.name ?? t('ordering.not-assigned')
-);
+const driverName = computed(() => {
+  const driver = allDrivers.value.find(d => d.id === order.value?.driverId);
+  if (driver) return driver.name;
+  return order.value?.driverId ? `#${order.value.driverId}` : t('ordering.not-assigned');
+});
 const vehicleLabel = computed(() => {
   const v = allVehicles.value.find(x => x.id === order.value?.vehicleId);
-  return v ? `${v.plate} · ${v.brand} ${v.model}` : t('ordering.not-assigned');
+  if (v) return `${v.plate} · ${v.brand} ${v.model}`;
+  return order.value?.vehicleId ? `#${order.value.vehicleId}` : t('ordering.not-assigned');
 });
 const mapUrl = computed(() => mapEmbedUrl(order.value?.deliveryAddress));
 const formatDate = (val) => val ? fmtDate(val, locale.value) : t('ordering.not-available');

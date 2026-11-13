@@ -19,6 +19,7 @@ import useNotificationStore from "../../notification/application/notification.st
 import usePaymentStore from "../../payment/application/payment.store.js";
 import useFulfillmentStore from "../../fulfillment/application/fulfillment.store.js";
 import useEquipmentStore from "../../equipment/application/equipment.store.js";
+import useIamStore from "../../iam/application/iam.store.js";
 import { fuelTypeLabel } from "../domain/fuel-types.js";
 
 const LITERS_PER_GALLON = 3.78541;
@@ -34,6 +35,7 @@ const notifications = () => useNotificationStore(pinia);
 const payments = () => usePaymentStore(pinia);
 const fulfillment = () => useFulfillmentStore(pinia);
 const equipment = () => useEquipmentStore(pinia);
+const iam = () => useIamStore(pinia);
 
 /**
  * Application read use case: list a buyer's equipment so another context
@@ -363,7 +365,8 @@ export async function confirmOrderReception(params = {}) {
     // Refresh relevant affected state only AFTER success
     await equipment().fetchEquipment();
     const provId = (typeof order === 'object' && order !== null ? order.providerId : null) ?? received?.providerId;
-    if (provId && (fulfillment().drivers.length || fulfillment().vehicles.length)) {
+    // Drivers and vehicles endpoints require a provider role; skip for buyer sessions.
+    if (iam().isProvider && provId && (fulfillment().drivers.length || fulfillment().vehicles.length)) {
         await Promise.all([
             fulfillment().fetchDrivers(provId),
             fulfillment().fetchVehicles(provId),
